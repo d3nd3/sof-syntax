@@ -1,0 +1,19 @@
+{
+  "scopeName": "source.lst",
+  "name": "SoF - Map List",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#strings" },
+    { "name": "string.unquoted.path.lst", "match": "^(?:\\w+\\s|\\w+\\s/).*$" },
+    { "name": "storage.type.folder.lst", "match": "^\\w+/" },
+    { "name": "invalid.deprecated.alpha.lst", "match": "(?:alpha[0-9]+|alpha|beta?[0-9]+|beta|[dD][eE][mM][oO])$" },
+    { "name": "entity.name.final.lst", "match": "final.?$" },
+    { "name": "variable.function.suffix.lst", "match": "_x$" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.lst", "match": "//.*$" } ] },
+    "strings": { "patterns": [ { "name": "string.quoted.double.lst", "begin": "\"", "end": "\"" } ] }
+  }
+}
+
+

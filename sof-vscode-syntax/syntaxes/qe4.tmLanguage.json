@@ -1,0 +1,27 @@
+{
+  "scopeName": "source.wrs",
+  "name": "SoF - SDK Radiant project file",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#numbers" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#flags" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.qe4", "match": "//.*$" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.qe4", "match": "\\b\\d+(?:\\.\\d+)?\\b" } ] },
+    "strings": { "patterns": [ { "name": "variable.language.qe4", "begin": "\"", "end": "\"" } ] },
+    "keywords": {
+      "patterns": [
+        { "name": "variable.function.qe4", "match": "\\b(?:basepath|rshcmd|remotebasepath|entitypath|texturepath|autosave|mapspath|bsp_Relight_Qrad|bsp_FullVis|bsp_NoVis|bsp_Entities|bsp_VisRad|bsp_FastVis)\\b" },
+        { "name": "string.exe.qe4", "match": "\\b(?:sofarghrad|sofvis|sofbsp|\\.exe)\\b" },
+        { "name": "string.drive.qe4", "match": ".:" },
+        { "name": "keyword.operator.flag.qe4", "match": "-\\w+" }
+      ]
+    },
+    "flags": { "patterns": [ { "name": "variable.parameter.qe4", "match": "\\(.*?\\)" } ] }
+  }
+}
+
+

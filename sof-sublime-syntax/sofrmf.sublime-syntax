@@ -1,0 +1,544 @@
+%YAML 1.2
+---
+name: SoF - Raven Menu Format
+file_extensions: [rmf]
+scope: source.rmf
+first_line_match: <stm>
+
+# FIXME: It has to be case insensitive
+
+contexts:
+  prototype:
+    - include: comments
+  main:
+    - include: strings
+    - match: '<'
+      scope: entity.name.section
+      push:
+        #- include: numbers
+        - include: strings
+        #- include: macroexpand
+        #- include: command
+        - include: Control
+        - include: Layout
+        - include: Area
+        - include: undocumented
+        #- include: always
+    #- match: '>'
+    #  scope: entity.name.section
+    #  pop: true
+
+  comments:
+    - meta_include_prototype: false
+    - include: strings
+    - match: //
+      scope: comment
+      push: inside-number-sign-comment
+  inside-number-sign-comment:
+    - meta_include_prototype: false
+    - meta_scope: comment
+    - match: \n
+      pop: true
+  string-package:
+    - match: '\^'
+      scope: markup.heading.1 punctuation.definition.heading
+      push:
+        - meta_scope: string
+        - match: '\^'
+          scope: markup.heading.1 punctuation.definition.heading
+          pop: true
+  strings:
+    - include: string-package
+    - match: '"'
+      scope: variable.language
+      push:
+        - meta_scope: variable.language
+        - match: '\^'
+          scope: markup.heading.1 punctuation.definition.heading
+          push:
+            - meta_scope: string
+            - match: '\^'
+              scope: markup.heading.1 punctuation.definition.heading
+              pop: true
+        - match: '"'
+          scope: variable.language
+          pop: true
+  numbers:
+    - match: (\s\-)|(\s\+)|(\s\!) #|(\=)|(\<)|(\>)
+      scope: keyword.punctuation.definition.keyword
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s))?)\b)# int suffixes
+      scope: constant.numeric
+  macroexpand:
+    - match: (\$)|(\#)
+      scope: constant.character.escape
+  always:
+    - match: '\+'
+      set:
+        - match: \w+
+          pop: true
+    - match: \b(vbargray|normaltext|hilitetext|backtint|tipback|tip|icontint|iconhilite|hgreen|hblue|lblue|lred|clear|black|transblack|semiblack|smokey|transgray|darkgray|gray|white|orange|red|blue|green|purple|cyan|header|yellow)\b
+      scope: variable.function
+    - match: \b(b_menu|bg_clear|spm_tint_1|spm_tint_2|spm_tint_3|spm_tint_4|spm_tint_5|spm_tint_6|spm_tint_7|spm_tint_8|spm_tint_9|spm_tint_11|spm_tint_12|spm_tint_14|spm_tint_15|spm_tint_16|spm_tint_17|spm_tint_18|spm_tint_19|spm_tint_20|spm_tint_21|spm_tint_22|spm_tint_23|spm_tint_24|spm_tint_25|spm_tint_26|spm_tint_27|spm_tint_28|spm_tint_29|spm_tint_30|spm_tint_31|spm_tint_menu_background|spm_tint_menu_normaltext|spm_tint_menu_hilitetext|spm_tint_menu_border|spm_tint_menu_background_top|spm_tint_menu_normaltext_top|spm_tint_menu_hilitetext_top|spm_tint_menu_disabledtext_top|spm_tint_menu_background_top_left|spm_tint_menu_normaltext_top_left|spm_tint_menu_hilitetext_top_left|spm_tint_menu_statictext|spm_tint_menu_scroll|spm_tint_menu_statictext_top|spm_tint_menu_border_top)\b
+      scope: storage.type
+  invalid:
+    - match: \w+.*?\s
+      scope: invalid
+      pop: true
+    - match: $\n?
+      pop: true
+  end:
+    - match: '\>'
+      scope: entity.name.section
+      pop: true
+  command:
+    - match: \b(menu|intermission|reloadall|refresh|popmenu|killmenu|return|menuoff|select|checkpass|changepass|freshgame)\b
+      scope: string.quoted.double
+
+## Main highlight keywords ##
+  Control:
+    - match: \b(stm)\b
+      scope: keyword.control
+      push:
+        - include: strings
+        - match: \b(nopush|noescape|waitanim|fragile|global)\b
+          scope: variable.function
+        - match: \b(command)\b
+          scope: entity.name
+        - match: \b(resize)\b
+          scope: entity.name
+          push:
+            - match: '[0-9]+\s[0-9]+'
+              scope: constant.numeric
+              pop: true
+        - include: end
+    - match: (?<!\s)\b(frame)\b
+      scope: keyword.control
+      push:
+        - include: SNM
+        - include: end
+        - match: \b(page|cpage)\b
+          scope: entity.name
+          comment: FIXME; Argh! Fails to pop out with a string quoted
+        #  push:
+        #    - include: SNM
+        #    - match: ([a-zA-Z0-9]+(?:\/)(\w+)|[a-zA-Z0-9]+(\w+))
+        #      scope: string
+        #      pop: true
+        #- include: end
+        - match: \b(cpage|cut|border|backfill)\b
+          scope: entity.name
+        - match: \b(center)\b
+          scope: variable.function markup.underline
+          pop: true
+        - include: end
+    - match: (?<!\s)\b(key)\b
+      scope: keyword.control
+      push:
+        - include: SNM
+        - include: Mousekey1
+        - match: \b(any|ANY)\b
+          scope: support.type markup.bold markup.italic
+          pop: true
+        - include: end
+    - match: (?<!\s)\b(ikey|ckey|alias|set|timeout)\b
+      scope: keyword.control
+      push:
+        - include: SNM
+        - match: \w+
+          scope: variable
+        - include: end
+    - match: (?<!\s)\b(cinclude|cninclude|einclude|exinclude)\b
+      scope: keyword.control
+      push:
+        - include: SNM
+        - match: \w+
+          scope: variable
+          push:
+            - include: SNM
+            - match: ([a-zA-Z0-9]+(?:\/)(\w+)|[a-zA-Z0-9]+(\w+))
+              scope: string
+            - include: end
+          pop: true
+        - include: end
+    - match: (?<!\s)\b(comment)\b
+      scope: keyword.control
+      push:
+        - match: '[a-zA-Z0-9]+'
+          scope: comment
+        - include: end
+    - match: (?<!\s)\b(includecvar|cbuf)\b
+      scope: keyword.control
+      push:
+        - include: SNM
+        - match: \w+
+          scope: variable
+        - include: end
+    - match: (?<!\s)\b(include|config|exitcfg)\b
+      scope: keyword.control
+      push:
+        - include: SNM
+        - match: \w+
+          scope: string
+        - include: end
+  Layout:
+    - match: (?<!\s)\b(tint)\b
+      scope: keyword
+      push:
+        - include: numbers
+        - match: '[a-zA-Z0-9]+'
+          scope: variable
+        - include: end
+    - match: (?<!\s)\b(font)\b
+      scope: keyword
+      push:
+        - include: numbers
+        - match: \b(tint|atint)\b
+          scope: entity.name
+        - match: \b(type)\b
+          scope: entity.name
+          push:
+            - match: \b(small|medium|title|interface)\b
+              scope: support.type markup.bold markup.italic
+              pop: true
+        - include: end
+    - match: (?<!\s)\b(br|hbr|HBR|center|normal|left|right)\b
+      scope: keyword
+    - match: (?<!\s)\b(cursor)\b
+      scope: keyword
+      set:
+        - match: '[0-1]'
+          scope: constant.numeric
+        - include: end
+        - match: '[a-zA-Z2-9]'
+          scope: invalid
+          pop: true
+    - match: (?<!\s)\b(defaults)\b
+      scope: keyword
+      push:
+        - include: numbers
+        - match: \b(noborder)\b
+          scope: entity.name
+        - match: \b(border)\b
+          scope: entity.name
+          set:
+            - match: '[0-9]+'
+              scope: constant.numeric
+            - include: end
+        - match: \b(tiptint|tipbtint)\b
+          scope: entity.name
+        - match: \b(tipfont)\b
+          scope: entity.name
+          set:
+            - match: \b(small|medium|title)\b
+              scope: support.type
+            - include: end
+    - match: (?<!\s)\b(translate)\b
+      scope: keyword
+      push:
+        - match: '[0-9]+'
+          scope: constant.numeric
+          set:
+            - include: numbers
+            - include: strings
+            - match: \b(conv|convbits)\b
+              scope: entity.name
+            - include: end
+    - match: (?<!\s)\b(emote|semote|demote)\b
+      scope: keyword
+      push:
+        - include: strings
+        - match: (\%n)|(\%p)
+          scope: constant.character.escape
+        - match: '[a-zA-Z0-9]+'
+          scope: variable
+        - include: end
+    - match: (?<!\s)\b(autoscroll|tab)\b
+      scope: keyword
+      push:
+        - match: '[0-9]+'
+          scope: constant.numeric
+        - include: end
+    - match: (?<!\s)\b(dmnames)\b
+      scope: keyword
+      push:
+        - include: strings
+        - match: \b(Standard|Assassin|Arsenal|CTF|Realistic)\b
+          scope: entity.name
+        - include: end
+    - match: (?<!\s)\b(strings)\b
+      scope: keyword
+      push:
+        - include: strings
+        - match: '[a-zA-Z0-9]+(\w+)'
+          scope: string
+        - include: end
+    - match: (?<!\s)\b(backdrop)\b
+      scope: keyword
+      push:
+        - include: numbers
+        - include: strings
+        - match: \b(tile|stretch|center|left|right|bgcolor|global)\b
+          scope: variable.function
+        - include: end
+  Area:
+    - match: (?<!\s)\b(blank)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: '[0-9]+\s[0-9]+'
+          scope: constant.numeric
+        - include: end
+    - match: (?<!\s)\b(hr|vbar|users|chat|rooms)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - include: end
+    - match: (?<!\s)\b(text|ctext)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - include: macroexpand
+        - match: '[a-zA-Z0-9]+'
+          scope: variable
+        - include: end
+    - match: (?<!\s)\b(image)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - include: macroexpand
+        - match: (?<=\<image\s)[a-zA-Z0-9]+\w?\/+\w+|(?<=\<image\s)[a-zA-Z0-9]+\w+
+          scope: string
+        - match: \b(setimage|text|cvartext|abs|scale)\b
+          scope: entity.name
+        - match: \b(alt)\b
+          scope: entity.name
+          push:
+            - include: ANS
+            - match: '[a-zA-Z0-9]+(\w+)'
+              scope: string
+              pop: true
+        - match: \b(hflip|vflip|transient)\b
+          scope: entity.name markup.underline
+        - include: end
+    - match: (?<!\s)\b(list)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(atext|match|bitmask)\b
+          scope: entity.name
+        - match: \b(files)\b
+          scope: entity.name
+          set:
+            - include: Area_key
+            - include: strings
+            - match: '(?<=\sfiles\s)[a-zA-Z0-9]+(\w+)'
+              scope: string
+            - include: end
+        - include: end
+    - match: (?<!\s)\b(slider)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(min|max|step|vertical|horizontal)\b
+          scope: entity.name
+        - match: \b(bar|button|cap)\b
+          scope: entity.name
+          set:
+            - include: Area_key
+            - include: strings
+            - match: '[a-zA-Z0-9]+(\w+)'
+              scope: string
+            - include: end
+        - include: end
+    - match: (?<!\s)\b(ticker)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(speed|delay)\b
+          scope: entity.name
+        - include: end
+    - match: (?<!\s)\b(input)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(global|hidden|history)\b
+          scope: entity.name markup.underline
+        - match: \b(maxchars)\b
+          scope: entity.name
+        - include: end
+    - match: (?<!\s)\b(popup)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: '[a-zA-Z0-9]+(\w+)'
+          scope: string
+        - include: end
+    - match: (?<!\s)\b(setkey)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(atext|talign)\b
+          scope: entity.name
+          set:
+            - include: Area_key
+            - include: strings
+            - match: '[a-zA-Z0-9]+(\w+)'
+              scope: string
+            - include: end
+        - include: end
+    - match: (?<!\s)\b(selection)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(weapons|items|ammo|misc)\b
+          scope: entity.name
+        - include: end
+    - match: (?<!\s)\b(ghoul|bghoul)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(control|oneshot)\b
+          scope: entity.name markup.underline
+        - match: \b(yaw|pitch|roll|scale|time|animate|rotate|totation|mousex|mousey|gbolt|gbolt|bgbolt|end)\b
+          scope: entity.name
+        - include: end
+    - match: (?<!\s)\b(gpm)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(cvar2|scale|rotate)\b
+          scope: entity.name
+          comment: Unsure with 'scale' and 'rotate' because they are not documented
+        - include: end
+    - match: (?<!\s)\b(filebox|filereq)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(sort)\b
+          scope: entity.name
+          push:
+            - match: \b(name|rname|size|rsize|time|rtime)\b
+              scope: markup.heading punctuation.definition.heading
+              pop: true
+            - include: end
+        - match: \b(backfill|talign)\b
+          scope: entity.name
+        - include: end
+    - match: (?<!\s)\b(loadbox)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(sort)\b
+          scope: entity.name
+          push:
+            - match: \b(name|rname|size|rsize|time|rtime)\b
+              scope: markup.heading punctuation.definition.heading
+              pop: true
+        - match: \b(backfill|spacing)\b
+          scope: entity.name
+        - match: \b(saving)\b
+          scope: entity.name markup.underline
+        - include: end
+    - match: (?<!\s)\b(serverbox)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(column|hostname|address)\b
+          scope: entity.name
+        - match: \b(dnames)\b
+          scope: entity.name
+        - include: end
+    - match: \b(serverdetail|players)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: \b(title)\b
+          scope: entity.name
+        - include: end
+    - match: \b(listfile)\b
+      scope: keyword
+      push:
+        - include: ANS
+        - match: '[a-zA-Z0-9]+(\w+)'
+          scope: string
+        - include: end
+
+  undocumented:
+    - match: \b(hbar)\b
+      scope: keyword
+      set:
+        - include: Area_key
+        - include: strings
+        - match: \b(image)\b
+          scope: string
+        - include: end
+    - match: \b(bot|botlist)\b
+      scope: keyword
+      push:
+        - include: Area_key
+        - include: strings
+        - match: '[a-zA-Z0-9]+(\w+)'
+          scope: variable
+        - include: end
+    - match: \b(onexit)\b
+      scope: keyword
+      push:
+        - include: strings
+        - match: '[a-zA-Z0-9]+(\w+)'
+          scope: variable
+        - include: end
+  Area_key:
+    - match: \b(key|ikey|ckey)\b
+      scope: variable.function
+      push: Mousekey
+    #- match: \b(any)\b # Meant for the 'key' 'ikey' 'ckey' only
+    #  scope: markup.heading.1 punctuation.definition.heading
+    - match: \b(atext|tab|width|height|cvar|cvari|inc|mod|tip|xoff|yoff|tint|atint|btint|ctint|dtint|bolt|bbolt|align|border)\b
+      scope: variable.function
+    - match: \b(iflt|ifle|ifge|ifeq|ifset|ifclr|ifne|ifgt)\b
+      scope: keyword.control
+    - match: \b(regular|invisible|noshade|noborder|noscale)\b
+      scope: variable.function markup.underline
+    - include: end
+      comment: Perhaps being more specific as some take parameter(s)
+
+  Mousekey:
+    - match: \b(any|ANY)\b
+      scope: markup.heading.1 punctuation.definition.heading
+      pop: true
+    - match: \b(1|2|3|4|5|6|7|8|9|0|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|tab|enter|escape|space|backspace|uparrow|leftarrow|rightarrow|downarrow|lalt|ralt|lctrl|rctrl|lshift|rshift|f1|f2|f3|f4|f5|f6|f7|f8|f9|f10|f11|f12|ins|del|pgdn|pgup|home|end|mouse1|mouse2|mouse3|mouse4|mouse5|mouse1dbl|mouse2dbl|mouse3dbl|mouse4dbl|mouse5dbl|joy1|joy2|joy3|joy4|aux1|aux2|aux3|aux4|aux5|aux6|aux7|aux8|aux9|aux10|aux11|aux12|aux13|aux14|aux15|aux16|aux17|aux18|aux19|aux20|aux21|aux22|aux23|aux24|aux25|aux26|aux27|aux28|aux29|aux30|aux31|aux32|kp_home|kp_uparrow|kp_pgup|kp_leftarrow|kp_5|kp_rightarrow|kp_end|kp_downarrow|kp_pgdn|kp_enter|kp_ins|kp_del|kp_fslash|kp_star|kp_minus|kp_plus|mwheelup|mwheeldown|pause|semicolon|caps|kp_scroll|kp_numlock|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|TAB|ENTER|ESCAPE|SPACE|BACKSPACE|UPARROW|LEFTARROW|RIGHTARROW|DOWNARROW|LALT|RALT|LCTRL|RCTRL|LSHIFT|RSHIFT|F1|F2|F3|F4|F5|F6|F7|F8|F9|F10|F11|F12|INS|DEL|PGDN|PGUP|HOME|END|MOUSE1|MOUSE2|MOUSE3|MOUSE4|MOUSE5|MOUSE1DBL|MOUSE2DBL|MOUSE3DBL|MOUSE4DBL|MOUSE5DBL|JOY1|JOY2|JOY3|JOY4|AUX1|AUX2|AUX3|AUX4|AUX5|AUX6|AUX7|AUX8|AUX9|AUX10|AUX11|AUX12|AUX13|AUX14|AUX15|AUX16|AUX17|AUX18|AUX19|AUX20|AUX21|AUX22|AUX23|AUX24|AUX25|AUX26|AUX27|AUX28|AUX29|AUX30|AUX31|AUX32|KP_HOME|KP_UPARROW|KP_PGUP|KP_LEFTARROW|KP_5|KP_RIGHTARROW|KP_END|KP_DOWNARROW|KP_PGDN|KP_ENTER|KP_INS|KP_DEL|KP_FSLASH|KP_STAR|KP_MINUS|KP_PLUS|MWHEELUP|MWHEELDOWN|PAUSE|SEMICOLON|CAPS|KP_SCROLL|KP_NUMLOCK|\'|\[|\]|\\|\/|\.|\-|\=)\b
+      scope: markup.bold markup.italic
+      pop: true
+    - match: '[a-zA-Z0-9]+\s+(\w)'
+      scope: invalid
+      pop: true
+  Mousekey1:
+    - match: \b(1|2|3|4|5|6|7|8|9|0|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|tab|enter|escape|space|backspace|uparrow|leftarrow|rightarrow|downarrow|lalt|ralt|lctrl|rctrl|lshift|rshift|f1|f2|f3|f4|f5|f6|f7|f8|f9|f10|f11|f12|ins|del|pgdn|pgup|home|end|mouse1|mouse2|mouse3|mouse4|mouse5|mouse1dbl|mouse2dbl|mouse3dbl|mouse4dbl|mouse5dbl|joy1|joy2|joy3|joy4|aux1|aux2|aux3|aux4|aux5|aux6|aux7|aux8|aux9|aux10|aux11|aux12|aux13|aux14|aux15|aux16|aux17|aux18|aux19|aux20|aux21|aux22|aux23|aux24|aux25|aux26|aux27|aux28|aux29|aux30|aux31|aux32|kp_home|kp_uparrow|kp_pgup|kp_leftarrow|kp_5|kp_rightarrow|kp_end|kp_downarrow|kp_pgdn|kp_enter|kp_ins|kp_del|kp_fslash|kp_star|kp_minus|kp_plus|mwheelup|mwheeldown|pause|semicolon|caps|kp_scroll|kp_numlock|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|TAB|ENTER|ESCAPE|SPACE|BACKSPACE|UPARROW|LEFTARROW|RIGHTARROW|DOWNARROW|LALT|RALT|LCTRL|RCTRL|LSHIFT|RSHIFT|F1|F2|F3|F4|F5|F6|F7|F8|F9|F10|F11|F12|INS|DEL|PGDN|PGUP|HOME|END|MOUSE1|MOUSE2|MOUSE3|MOUSE4|MOUSE5|MOUSE1DBL|MOUSE2DBL|MOUSE3DBL|MOUSE4DBL|MOUSE5DBL|JOY1|JOY2|JOY3|JOY4|AUX1|AUX2|AUX3|AUX4|AUX5|AUX6|AUX7|AUX8|AUX9|AUX10|AUX11|AUX12|AUX13|AUX14|AUX15|AUX16|AUX17|AUX18|AUX19|AUX20|AUX21|AUX22|AUX23|AUX24|AUX25|AUX26|AUX27|AUX28|AUX29|AUX30|AUX31|AUX32|KP_HOME|KP_UPARROW|KP_PGUP|KP_LEFTARROW|KP_5|KP_RIGHTARROW|KP_END|KP_DOWNARROW|KP_PGDN|KP_ENTER|KP_INS|KP_DEL|KP_FSLASH|KP_STAR|KP_MINUS|KP_PLUS|MWHEELUP|MWHEELDOWN|PAUSE|SEMICOLON|CAPS|KP_SCROLL|KP_NUMLOCK|\'|\[|\]|\\|\/|\.|\-|\=)\b
+      scope: markup.bold markup.italic
+      pop: true
+
+  ANS:
+    - include: Area_key
+    - include: numbers
+    - include: strings
+  SNM:
+    - include: strings
+    - include: numbers
+    - include: macroexpand
+
+  Demo:
+    - match: \b(roomreq)\b
+      scope: keyword.control
+    #- match: \b(nopush|noescape)\b
+      comment: Keywords used only in the demo version.

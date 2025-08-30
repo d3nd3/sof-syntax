@@ -1,0 +1,61 @@
+%YAML 1.2
+---
+name: SoF - Map List
+file_extensions: [lst]
+scope: source.lst
+contexts:
+  prototype:
+    - include: comments
+  main:
+    - include: strings
+    - meta_scope: string
+    - match: (^\w+\s)|(^\w+\s/)
+      scope: string
+    #- match: /
+    - match: (^\w+/)
+      scope: storage.type
+      push:
+        - include: strings
+        - match: (alpha[0-9]+)|(alpha)|(beta?[0-9]+)|(beta)|([dD][eE][mM][oO])$\n?
+          scope: keyword.error markup.bold
+        - match: final.?$\n
+          scope: entity.name markup.bold
+        - match: _x$\n
+          scope: variable.function markup.bold
+        - match: $\n?
+          pop: true
+  comments:
+    - meta_include_prototype: false
+    - match: //
+      scope: comment
+      push: inside-comment
+  inside-comment:
+    - meta_include_prototype: false
+    - meta_scope: comment
+    - match: \n
+      pop: true
+  strings:
+    - match: '"'
+      scope: variable.language
+      push:
+        - meta_include_prototype: false
+        - meta_scope: variable.language
+        - match: '""'
+          scope: variable.language
+        - match: '"'
+          scope: variable.language
+          pop: true
+  numbers:
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric

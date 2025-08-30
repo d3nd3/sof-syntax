@@ -1,0 +1,31 @@
+{
+  "scopeName": "source.qdt",
+  "name": "SoF - SoF QData",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#numbers" },
+    { "include": "#strings" },
+    { "include": "#directives" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.double-slash.qdt", "match": "//.*$" },
+        { "name": "comment.line.number-sign.qdt", "match": "#.*$" },
+        { "name": "comment.line.semicolon.qdt", "match": ";.*$" },
+        { "name": "comment.block.qdt", "begin": "/\\*", "end": "\\*/" }
+      ]
+    },
+    "strings": { "patterns": [ { "name": "string.quoted.double.qdt", "begin": "\"", "end": "\"" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.qdt", "match": "\\b\\d+(?:\\.\\d+)?\\b" } ] },
+    "directives": {
+      "patterns": [
+        { "name": "keyword.directive.qdt", "match": "^\\$\\s*(?:pak|mipdir|picdir|load|texturemix|tmixdir|file|dir|maps|include)\\b" },
+        { "name": "entity.name.function.qdt", "match": "\\bmip\\b" },
+        { "name": "support.constant.gl.qdt", "match": "\\bGL_(?:ZERO|ONE|SRC_COLOR|ONE_MINUS_SRC_COLOR|DST_COLOR|ONE_MINUS_DST_COLOR|SRC_ALPHA|ONE_MINUS_SRC_ALPHA|DST_ALPHA|ONE_MINUS_DST_ALPHA|SRC_ALPHA_SATURATE)\\b" }
+      ]
+    }
+  }
+}
+
+

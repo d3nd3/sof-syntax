@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+name: SoF - Image Files
+file_extensions: [ifl]
+scope: source.ifl
+contexts:
+  main:
+    - meta_scope: keyword
+    - match: \d
+      scope: constant.numeric
+    - match: (\.[tT][gG][aA])$\n?
+      scope: entity.name
+      pop: true
+

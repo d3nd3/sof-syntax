@@ -1,0 +1,76 @@
+%YAML 1.2
+---
+name: SoF - String Package
+file_extensions: [sp]
+scope: source.sp
+first_line_match: ^VERSION
+contexts:
+  main:
+    - include: numbers
+    - include: paletes
+    - meta_scope: string
+
+    - match: ^VERSION
+      scope: keyword
+      push:
+        - meta_scope: entity.name
+        - match: \b[0-9]|[A-Z]\b
+          pop: true
+    - match: ^ID
+      scope: keyword
+      push:
+        - meta_scope: entity.name
+        - match: \b*[0-9]\b
+          pop: true
+    - match: REFERENCE
+      scope: keyword
+      push:
+        - meta_scope: entity.name
+        - match: \b*[a-zA-Z0-9]\b
+          pop: true
+    - match: ^DESCRIPTION
+      scope: keyword
+    - match: ^COUNT
+      scope: keyword
+      push:
+        - meta_scope: entity.name
+        - match: \b*[0-9]\b
+          pop: true
+    - match: ^INDEX
+      scope: keyword
+    - match: FLAGS
+      scope: keyword
+      push:
+        - meta_scope: storage.type
+        - match: "\n"
+          pop: true
+    - match: \b(TEXT_ENGLISH|TEXT_FRENCH|TEXT_GERMAN|TEXT_BRITISH)\b
+      scope: keyword
+    - match: NOTES
+      scope: string
+    - match: //
+      scope: comment
+      push:
+        - meta_scope: comment
+        - match: $\n?
+          pop: true
+    - match: '"'
+      push: string
+  string:
+    - meta_scope: variable.parameter
+    - match: '"'
+      pop: true
+  numbers:
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric

@@ -1,0 +1,31 @@
+{
+  "scopeName": "source.ds",
+  "name": "SoF - Designer Script",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#commands" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.ds", "match": "//.*$" } ] },
+    "strings": {
+      "patterns": [ { "name": "string.quoted.double.ds", "begin": "\"", "end": "\"" } ]
+    },
+    "numbers": { "patterns": [ { "name": "constant.numeric.ds", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
+    "keywords": {
+      "patterns": [
+        { "name": "keyword.control.ds", "match": "\\b(?:if|endif|else|while|endwhile|on|suspend|resume|exit|label|goto|wait|debug)\\b" }
+      ]
+    },
+    "commands": {
+      "patterns": [
+        { "name": "variable.function.ds", "match": "\\b(?:print|playsong|\\bplay sound\\b|enable|disable|cache|unload|setcvar cvar|run console command)\\b" },
+        { "name": "entity.name.ds", "match": "\\b(?:remove entity|use entity|reset ai for entity|move entity|rotate entity|moverotate entity|animate entity|copy player attributes from entity|set view angles of entity|set cache size to|helicopter entity|tank entity)\\b" }
+      ]
+    }
+  }
+}
+
+

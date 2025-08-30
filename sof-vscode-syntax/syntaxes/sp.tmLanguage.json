@@ -1,0 +1,22 @@
+{
+  "scopeName": "source.sp",
+  "name": "SoF - String Package",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#numbers" },
+    { "include": "#sections" },
+    { "include": "#strings" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.sp", "match": "//.*$" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.sp", "match": "\\b\\d+\\b" } ] },
+    "sections": {
+      "patterns": [
+        { "name": "keyword.control.sp", "match": "^(?:VERSION|ID|REFERENCE|DESCRIPTION|COUNT|INDEX|FLAGS|TEXT_ENGLISH|TEXT_FRENCH|TEXT_GERMAN|TEXT_BRITISH|NOTES)\\b" }
+      ]
+    },
+    "strings": { "patterns": [ { "name": "string.quoted.double.sp", "begin": "\"", "end": "\"" } ] }
+  }
+}
+
+

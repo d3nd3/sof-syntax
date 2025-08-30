@@ -1,0 +1,43 @@
+%YAML 1.2
+---
+name: SoF - Ghoul Bolton Model
+file_extensions: [gbm]
+scope: source.gbm
+contexts:
+  main:
+    - match: (.+$\n)|(.+)
+      scope: string
+      set:
+        - match: .+$\n
+          scope: entity.name
+          set:
+            - match: .+$\n
+              scope: entity.name
+              set:
+                - match: .+$\n
+                  scope: entity.name
+                  set:
+                    - match: .+$\n
+                      scope: variable.function
+                      set:
+                        - match: .+$\n
+                          scope: variable.function
+                          set:
+                            - match: .+$\n
+                              scope: variable.function
+                              set:
+                                - match: (^[\s]*\n)|(.)
+                                  scope: keyword
+                                  set:
+                                    - match: ((\w+\s)(\w+\s))
+                                      scope: keyword
+                                      set:
+                                        - match: '[0-9]+'
+                                          scope: constant.numeric
+                                          pop: true
+                                          set:
+                                            - match: (^[\s]*\n)?
+                                              pop: true
+                                    - match: (\{\})
+                                      scope: keyword
+                                      pop: true

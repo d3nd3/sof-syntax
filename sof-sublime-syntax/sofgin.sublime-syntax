@@ -1,0 +1,204 @@
+%YAML 1.2
+---
+name: SoF - GIN
+file_extensions: [gin]
+scope: source.gin
+first_line_match: (^File:)
+contexts:
+  main:
+    - include: numbers
+
+    - match: (^File:)
+      scope: keyword
+      push:
+        - match: .*$\n
+          scope: entity.name
+          pop: true
+      pop: true
+
+    - match: (^3DSMax BBox Min:)
+      scope: keyword
+      push:
+        - include: numbers
+        - match: \(
+          scope: entity.name
+        - match: \,
+          scope: keyword
+        - match: \)$\n
+          scope: entity.name
+          pop: true
+
+    - match: (^3DSMax BBox Max:)
+      scope: keyword
+      push:
+        - include: numbers
+        - match: \(
+          scope: entity.name
+        - match: \,
+          scope: keyword
+        - match: \)
+          scope: entity.name
+          pop: true
+        - match: (?:(^[\s]*\n))
+          pop: true
+      pop: true
+
+    - match: (^Sequence)
+      scope: keyword
+      push:
+        - match: .*$\n
+          scope: entity.name
+          pop: true
+      pop: true
+
+    - match: (^Frame Time)
+      scope: keyword
+      push:
+        - include: numbers
+        - match: $\n
+          pop: true
+        - match: ^[\s]*\n
+          pop: true
+      pop: true
+
+    - match: (^NoteKeys:)
+      scope: keyword
+    - match: \s+
+      push:
+        - include: main
+        - match: (time)|(token)|(rest)
+          scope: variable.function
+        - match: '"'
+          scope: variable.language
+          push:
+            - meta_scope: variable.language
+            - match: '"'
+              scope: variable.language
+              pop: true
+        - match: $\n
+          pop: true
+        - match: ^[\s]*\n
+          pop: true
+      pop: true
+
+    - match: (^StartFrame)
+      scope: keyword
+      push:
+        - include: numbers
+        - match: (NumFrames)
+          scope: keyword
+          pop: true
+      pop: true
+
+    - match: (^Materials)
+      scope: keyword
+      push: Materials
+  Materials:
+    - match: \s+(Name)
+      scope: keyword
+      push:
+        - match: (.*)
+          scope: entity.name
+          push:
+            - match: \s+
+              push:
+                - include: Materials
+                - include: numbers
+                - match: (opaque)|(specular)|(tex)|(two sided)|(additive)|(Animates:)
+                  scope: variable.function
+                - match: no
+                  scope: keyword markup.bold
+                - match: yes
+                  scope: entity.name markup.bold
+                - match: (Tex Map)
+                  scope: variable.function
+                  push:
+                    - include: numbers
+                    - match: \[
+                      scope: variable.function
+                    - match: \]
+                      scope: variable.function
+                      pop: true
+                - match: (Warning:)
+                  scope: message.error markup.italic
+                  push:
+                    - meta_scope: message.error markup.italic
+                    - match: $\n
+                      pop: true
+              pop: true
+          pop: true
+      pop: true
+
+    - match: (^Nulls:)|(^Meshes:)|(^Cameras:)
+      scope: keyword
+      push:
+        - match: $\n
+          pop: true
+        - match: ^[\s]*\n
+          pop: true
+
+    - match: (^Lights:)
+      scope: keyword
+      push:
+        - match: \n{1}
+          push:
+            - include: numbers
+            #- match: \b(Non-Blob Size|Blob Size|verts|Mat Blocks|cPos|cTex|cNorm|Mesh|Elem|Corn|aPos|aTex|aNorm|Comp|nulls)\b
+            - match: \b(Non-Blob Size)\b
+              scope: storage.type
+            - match: \b(Blob Size)\b
+              scope: storage.type
+            - match: \b(verts)\b
+              scope: storage.type
+            - match: \b(nulls)\b
+              scope: storage.type
+            - match: \b(Mat Blocks)\b
+              scope: storage.type
+            - match: \b(cPos)\b
+              scope: storage.type
+            - match: \b(cTex)\b
+              scope: storage.type
+            - match: \b(cNorm)\b
+              scope: storage.type
+            - match: \b(Mesh)\b
+              scope: storage.type
+            - match: \b(Elem)\b
+              scope: storage.type
+            - match: \b(Corn)\b
+              scope: storage.type
+            - match: \b(aPos)\b
+              scope: storage.type
+            - match: \b(aTex)\b
+              scope: storage.type
+            - match: \b(aNorm)\b
+              scope: storage.type
+            - match: \b(Comp)\b
+              scope: storage.type
+              push: loop
+              pop: true
+          pop: true
+      pop: true
+
+  loop:
+    - include: numbers
+    - match: $\n
+      pop: true
+    - match: ^[\s]*\n
+      pop: true
+      push: main
+  numbers:
+    - match: (\=)|(\+)|(\-)
+      scope: keyword
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric

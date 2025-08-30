@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[sp_sc_func_load_file ${1:FILE}]]></content>
+    <!-- Optional: Tab trigger to activate the snippet -->
+    <tabTrigger>f-loadfile</tabTrigger>
+    <!-- Optional: Scope the tab trigger will be active in -->
+    <scope>source.func</scope>
+    <!-- Optional: Description to show in the menu -->
+    <description>Sofplus snippets</description>
+</snippet>

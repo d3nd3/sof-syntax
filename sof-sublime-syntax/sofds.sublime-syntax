@@ -1,0 +1,521 @@
+%YAML 1.2
+---
+name: SoF - Designer Script
+file_extensions: [ds]
+scope: source.ds
+first_line_match: (#include)|(#define)|(output)
+contexts:
+  prototype:
+    - include: comments
+  main:
+    - include: Directives
+    - include: Declarations
+    - include: Code
+    - include: General
+    - include: Entity
+    - include: Function
+
+  Directives:
+    - match: (#include)|(output)
+      scope: keyword
+      push:
+        - include: strings2
+        - meta_scope: variable
+        - match: $\n
+          pop: true
+
+    - match: '#define'
+      scope: keyword
+      push:
+        - match: '[a-zA-Z0-9]+\w+'
+          scope: entity.other.inherited-class
+          set:
+            - include: numbers
+            - include: n
+  Declarations:
+    - match: \b(parameter|local|global|field)\b
+      scope: storage.type
+      push:
+        - match: \b(int|float|vector|entity)\b
+          scope: entity.name
+          set:
+            #- include: always
+            - include: strings2
+            - include: numbers
+            - match: (\.)|(\=)|(\-)|(\*)|(\+)|(\<)|(\>)|(\!)|(\/)
+              scope: keyword.operator
+            - match: '[a-zA-Z0-9]+\w+'
+              scope: variable
+            - include: n
+  Code:
+    - include: numbers
+
+    - match: (\.)|(\=)|(\-)|(\*)|(\+)|(\<)|(\>)|(\!)|(\/)
+      scope: keyword.operator
+
+    - match: ^(on\s)|^\s+(on\s)
+      scope: keyword.other
+      push:
+        - match: ([a-zA-Z0-9]+\.+\w+)|([a-zA-Z0-9]+\w+)
+          scope: variable
+          set:
+            - include: numbers
+            - match: (\.)|(\=)|(\-)|(\*)|(\+)|(\<)|(\>)|(\!)|(\/)
+              scope: keyword.operator
+            - match: (goto)
+              scope: keyword.other
+              set:
+                - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+                  scope: entity.name markup.bold
+                  pop: true
+    - match: \b^(if|endif|else|while|endwhile|on|suspend|resume|exit)\b|^\s+\b(if|endif|else|while|endwhile|suspend|resume|exit)\b
+      scope:  keyword.control
+
+    - match: ^(label)|^\s+(label)
+      scope: keyword.other
+      push:
+        - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+          scope: entity.name markup.bold
+          pop: true
+
+    - match: ^(goto)|^\s+(goto)
+      scope: keyword.other
+      push:
+        - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+          scope: variable.function markup.bold
+          pop: true
+
+    - match: ^wait|^\s+wait
+      scope:  keyword.control
+      push:
+      - match: \d+\.\d+|\d+|\.\d+
+        scope: constant.numeric
+        set:
+          - match: \b(second|seconds)\b
+            scope: keyword.other
+          - include: n
+      - match: \b(for any|for all)\b
+        scope: keyword.other
+        set:
+          - match: \b(clearing|signaling)\b
+            scope: keyword.other
+          - match: ','
+            scope: keyword.other
+          - include: n
+      - match: ([a-zA-Z]+\w+)
+        scope: variable
+        set:
+          - match: \b(second|seconds)\b
+            scope: keyword.other
+          - include: n
+
+    - match: ^debug|^\s+debug
+      scope: keyword.other
+      push:
+        - match: '\w+'
+          scope: variable
+          set:
+            - match: \b(enable|disable)\b
+              scope: variable.parameter
+            - match: \b(move|rotate|time)
+              scope: variable.function
+            - include: n
+  General:
+    - match: ^print|^\s+print
+      scope: variable.function
+      push:
+        - include: always
+        - match: captioned
+          scope: variable.parameter
+        - include: n
+        - match: (centered to entity)|(to entity)
+          scope: storage.type
+          set:
+            - match: \w+
+              scope: variable
+              pop: true
+        - match: (at level)
+          scope: storage.type
+          set:
+            - match: \d
+              scope: constant.numeric
+              pop: true
+
+    - match: ^(playsong)|^\s+(playsong)
+      scope: variable.function
+      push:
+        - include: numbers
+        - include: n
+
+    - match: ^(play sound)|^\s+(play sound)
+      scope: variable.function
+      push:
+        - include: Defined
+        - include: always
+        - match: \b(for entity|on channel|at volume|at attenuation)\b
+          scope: storage.type
+        - match: \b(after)\b
+          scope: storage.type
+          push:
+            - match: ([a-zA-Z]+\w+)
+              scope: variable
+              set:
+                - match: seconds
+                  scope: storage.type
+                  pop: true
+            - match: (?:(?:\b\d(?:[\d]*\d)?\.\d(?:[\d]*\d)?))
+              scope: constant.numeric
+              set:
+                - match: seconds
+                  scope: storage.type
+                  pop: true
+        - include: n
+
+    - match:  ^\b(enable)|(disable)\b|^\s+\b(enable)|(disable)\b
+      scope: variable.parameter
+      push:
+      - match: \b(cinematics|ambient sounds|plague skins)\b
+        scope: storage.type
+        pop: true
+      - match: \b(trigger entity)\b
+        scope: storage.type
+        set:
+          - include: n
+
+    - match: ^(cache)|^\s+(cache)
+      scope: variable.function
+      push:
+        - match: \b(sound|roff|strings)\b
+          scope: variable.function
+          set:
+          - include: always
+          - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+            scope: variable
+          - include: n
+
+    - match: ^(unload)|^\s+(unload)
+      scope: variable.function
+      push:
+        - match: \b(sound|roff)\b
+          scope: variable.function
+          set:
+          - include: always
+          - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+            scope: variable
+          - include: n
+
+    - match: ^(setcvar cvar)|^\s+(setcvar cvar)
+      scope: variable.function
+      push:
+        - include: always
+        - match: \b(to)\b
+          scope: variable.function
+          set:
+            - include: always
+            - match: ([a-zA-Z]+\w+)
+              scope: variable
+            - include: n
+
+    - match: ^(run console command)|^\s+(run console command)
+      scope: variable.function
+      push:
+        - include: always
+        - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+          scope: variable
+        - include: n
+
+  Entity:
+    - match: ^\b(remove entity|use entity|reset ai for entity)\b|^\s+\b(remove entity|use entity|reset ai for entity)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+          scope: variable
+        - include: n
+
+    - match: ^\b(move entity|rotate entity)\b|^\s+\b(move entity|rotate entity)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: \b(to|by)\b
+          scope: storage.type
+          push:
+            - include: always
+            - match: ','
+              scope: keyword
+            - match: \b(signaling)\s\b
+              scope: storage.type
+              push:
+                - include: always
+                - match: ([a-zA-Z]+\w+)
+                  scope: variable
+                  pop: true
+            - include: n
+            - match: \b(at\s)\b
+              scope: variable.function
+              push:
+                - match: \b(([0-9]+(?:\.)+[0-9]+)|([0-9]+))\b
+                  scope: constant.numeric
+                - match: \sspeed
+                  scope: storage.type
+                  pop: true
+            - match: \b(over\s)\b
+              scope: variable.function
+              push:
+                - match: \b(([0-9]+(?:\.)+[0-9]+)|([0-9]+))\b
+                  scope: constant.numeric
+                - match: \sseconds
+                  scope: storage.type
+                  pop: true
+            - include: n
+        - include: n
+
+    - match: ^\b(moverotate entity)\b|^\s+\b(moverotate entity)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: \b(from file)\b
+          scope: storage.type
+          push:
+            - include: always
+            - match: \b(at|speed|signaling)\b
+              scope: storage.type
+              comment: Undocumented part, unsure if 'at' & 'speed' exist
+            - include: n
+        - include: n
+
+    - match: ^(animate entity)|^\s+(animate entity)
+      scope: variable.function
+      push:
+        - include: always
+        - include: Defined
+        - match: \b(showing emotion)\b
+          scope: storage.type
+        - include: animate-entity
+        - match: \b(performing action)\b
+          scope: storage.type
+          push:
+            - include: Defined
+            - include: always
+            - include: animate-entity
+            - match: \b(targeting entity)\b
+              scope: storage.type
+              push:
+                - include: Defined
+                - match: \b(nulltarget)\b
+                  scope: storage.type
+                  push:
+                    - include: Defined
+                    - include: animate-entity
+                    - include: n
+                - include: animate-entity
+                - include: n
+            - match: \b(repeating for)\b
+              scope: storage.type
+              push:
+                - include: always
+                - match: \b(times)\b
+                  scope: storage.type
+                - include: animate-entity
+                - include: n
+            - include: n
+        - include: n
+
+    - match: ^(copy player attributes from entity)|^\s+(copy player attributes from entity)
+      scope: variable.function
+      push:
+        - include: always
+        - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+          scope: variable
+          push:
+            - include: always
+            - match: \b(to entity)\b
+              scope: storage.type
+            - include: n
+        - include: n
+
+    - match: ^(set view angles of entity)|^\s+(set view angles of entity)
+      scope: variable.function
+      push:
+        - include: always
+        - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+          scope: variable
+          push:
+            - include: always
+            - match: \b(to)\b
+              scope: storage.type
+            - include: n
+        - include: n
+
+    - match: ^(set cache size to)|^\s+(set cache size to)
+      scope: variable.function
+      push:
+        - include: always
+        - match: '[0-9]+'
+          scope: variable
+          push:
+            - include: always
+            - match: \b(to)\b
+              scope: storage.type
+            - include: n
+        - include: n
+
+    - match: ^\b(helicopter entity|tank entity)\b|^\s+\b(helicopter entity|tank entity)\b
+      scope: variable.function
+      push:
+        - include: always
+        - include: n
+  Function:
+   - include: always
+
+   - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+     scope: variable
+     push:
+      - include: always
+      - match: (\.)|(\=)|(\-)|(\*)|(\+)|(\<)|(\>)|(\!)|(\/)|(,)
+        scope: keyword.operator
+      - include: Defined
+      - match: \b(spawn entity with fields)\b
+        scope: storage.type
+        push:
+          - include: always
+          - match: (\.)|(\=)|(\-)|(\*)|(\+)|(\<)|(\>)|(\!)(\/)|(,)
+            scope: keyword.operator
+          - match: ([a-zA-Z]+(?:_)+\w+)|([a-zA-Z]+\w+)
+            scope: string
+          - include: n
+
+      - match: \b(random from)\b
+        scope: storage.type
+        push:
+          - include: always
+          - match: \b(to)\b
+            scope: storage.type
+          - match: ([0-9]+)
+            scope: string
+          - include: n
+
+      - match: \b(find entity player|find entity with targetname|find entity with scripttarget|sin|cos|get entity other|get entity activator|get entity player|entity)\b
+        scope: storage.type
+        pop: true
+      - include: n
+
+  animate-entity:
+    - include: always
+    - match: \b(targeting entity)\b
+      scope: storage.type
+      push:
+        - include: Defined
+        - match: \b(nulltarget)\b
+          scope: storage.type
+          push:
+            - include: Defined
+            - include: animate-entity
+            - include: n
+        - include: animate-entity
+        - include: n
+    - match: \b(repeating for)\b
+      scope: storage.type
+      push:
+        - include: always
+        - match: \b(times)\b
+          scope: storage.type
+        - include: animate-entity
+        - include: n
+    - include: n
+    - match: \b(holding for)\b
+      scope: storage.type
+    - match: \b(signaling)\b
+      scope: storage.type
+    - match: \b(by moving)\b
+      scope: storage.type
+    - match: \b(by turning)\b
+      scope: storage.type
+    - match: \b(from source entity)\b
+      scope: storage.type
+    - match: ','
+      scope: keyword
+
+  Defined:
+    - match: |-
+        \b(
+          |CHAN_AUTO|CHAN_WEAPON|CHAN_VOICE|CHAN_ITEM|CHAN_BODY|CHAN_ENT1|CHAN_ENT2|CHAN_NO_PHS_ADD|CHAN_RELIABLE|
+          |PRINT_LOW|PRINT_MEDIUM|PRINT_HIGH|PRINT_CHAT|
+          |MOVETYPE_NONE|MOVETYPE_NOCLIP|MOVETYPE_PUSH|MOVETYPE_STOP|MOVETYPE_WALK|MOVETYPE_STEP|MOVETYPE_FLY|MOVETYPE_TOSS|MOVETYPE_FLYMISSILE|MOVETYPE_BOUNCE|MOVETYPE_DAN|
+          |EMOTION_NORMAL|EMOTION_FEAR|EMOTION_ANGRY|EMOTION_PAIN|EMOTION_DEAD|EMOTION_TALK|EMOTION_TALKANGRY|EMOTION_TALKAFRAID|
+          |UNKNOWN|RUN|JUMP|DEATH|DEATHTHROWN|DUCK_DN|DUCK_MID|DUCK_UP|DUCK_SHOOT|IDLE|IDLESTRETCH|IDLELOOK|SHOOT|WALK|AFRAIDRUN|GUN_IDLE|
+          |CCH_A_FWD_P_2|CCH_A_FWD_R_2|CCH_SONKNEES_2FRNT_N_N|CCH_XCCHCOWER_MID_A_A|CCH_XCCHCOWER_MID2_A_A|CCH_XCROUCH_UP_MRS_2|CCH_XCROUCH_UP_PK_A|CCH_XONKNEES_N_N_N|LB_PGENERICDIE_N_N_N|LS_XGETKICKED_N_N_N|PRN_XCOVERHEAD_N_A_A|SI_ISIT_N_A_A|SI_XALERTSTAND_UP_A_A|SI_XBYWALL_N_N_N|STD_ASHUFFLE_N_P_2|STD_ASHUFFLE_N_P_A|STD_ASHUFFLE_N_MS_2|STD_ASHUFFLE_N_R_2|STD_ASHUFFLE_N_L_2|STD_F_FWD_P_2|STD_F_FWD_S_2|STD_FATTITUDE_N_P_A|STD_FAUTOSWEEP_N_PM_A|STD_FCORNERPEAK_LT_P_A|STD_FCORNERPEAK_RT_P_A|STD_FGANGBANGER_N_M_2|STD_FSWATSTYLE_FWD_M_2|STD_FVIOLENT_DWN_M_2|STD_FVIOLENT_DWN_P_N|STD_IALERT_N_P_N|STD_ICLEANGUN_N_A_N|STD_ICLEANGUN2_N_MRS_2|STD_ILEANLOOK_FRM_PK_N|STD_ILEANLOOK_MID_PK_N|STD_ILEANLOOK_TO_PK_N|STD_ILOOKING_N_A_A|STD_ILOOKING_N_MRS_2|STD_IMONITORUP_N_A_N|STD_IMONITORUP2_N_A_N|STD_ISMOKE_FRM_A_N|STD_ISMOKE_N_A_N|STD_ISMOKE_TO_A_N|STD_ISTAND_N_MRS_2|STD_ITALK_N_A_N|STD_ITALK_N_MRS_2|STD_ITALKGEST1_N_A_N|STD_ITALKGEST2_N_A_N|STD_ITALKGEST3_N_A_N|STD_ITOUCHNUTS_N_A_N|STD_ITURNVALVE_FRM_N_N|STD_ITURNVALVE_N_N_N|STD_ITURNVALVE_TO_N_N|STD_IWIPEBROW_N_A_N|STD_JDIVE2PRONE_N_A_N|STD_JDOWN_N_A_A|STD_JDROP_N_A_A|STD_JRUN_FWD_A_A|STD_JUPTO_N_A_A|STD_MKICKLOW_N_A_A|STD_MNINJAKICK_N_A_B|STD_MPISTOLWHIP_N_P_N|STD_R_DWNST_MRS_2|STD_R_N_MRS_2|STD_R_N_PK_N|STD_RAFRAID_N_N_N|STD_RAIMSTRAF_LT_MRS_2|STD_RAIMSTRAF_LT_P_CBN|STD_RAIMSTRAF_RT_MRS_2|STD_RAIMSTRAF_RT_P_CBN|STD_RBACKAIM_N_MRS_2|STD_RBACKAIM_N_P_2|STD_RGUNUP_N_P_2|STD_MRIFLEBUTT_N_MRS_2|STD_SBLOWN_2BK_N_N|STD_SFALLFWD_2FRNT_N_N|STD_SINBACK_2FRNT_N_N|STD_SSTUMBLE_2FRNT_N_N|STD_SSTUMBLE_2BK_P_N|STD_SVIOLENT_N_N_N|STD_WATTITUDE_N_PK_A|STD_WBCKSIGNAL_N_N_N|STD_WCARRY1_N_N_N|STD_WJOG_N_MRS_2|STD_WJOGGUNDWN_N_P_2|STD_WJOGGUNUP_N_P_A|STD_WNORMAL_N_PK_A|STD_WPATROL_N_MRS_2|STD_WPUSH_N_N_N|STD_WPUSHCART_N_N_N|STD_XAFRAIDSHAKE_N_N_N|STD_XALARMPUSH_N_A_N|STD_XBOOMCROUCH_N_A_N|STD_XCCHCOWER_DWN_A_A|STD_XCHOKE_N_N_N|STD_XDANCE_N_N_N|STD_XDONTSHOOT_N_A_N|STD_XGOPRONE_N_A_A|STD_XFEARWAVE_N_N_N|STD_XKICKDOOR_N_A_A|STD_XTUMBLE_2FRNT_N_N|STD_XLADDER_DWN_A_A|STD_XLADDER_UP_A_A|STD_XROLL_LT_A_A|STD_XROLL_RT_A_A|STD_XROLLTOCCH_FWD_A_A|STD_XSTARTLED_N_A_A|STD_XSTUMBLE_N_A_A|STD_XYELLATYOU_N_A_A|STD_XYELLPOINT_FWD_A_N|STD_XYELLWAVE_BK_A_N|
+          |PRN_C_N_A_2|PRN_XCOVERHEAD_TO_A_A|PRN_XFALLING_N_N_N|PRN_XFALLLAND_N_N_N|PRN_XTOSTAND_N_A_A|CCH_RAIM_FWD_MRS_2|CCH_RAIM_FWD_P_2|CCH_XCCHCOWER2_MID_A_A|LB_XLEANUPSHOOT_N_P_N|lb_pcrawl_bk_a_n|LB_PCRAWL_BCK_P_N|LB_XLEANUPSHOOT_N_P_N|CCH_A_FWD_MS_2|CCH_F_FWD_L_2|CCH_RAIM_N_L_2|CCH_TLOBGRENADE_N_A_N|STD_ECHOKEKNEES_TO_N_N|CCH_ECHOKEKNEES_N_N_N|CCH_ECHOKEDEATH_N_N_N|STD_SELECTROCUTE_N_N_N|STD_EOFFLADDER_UP_A_N|STD_EPOUNDDOOR_N_A_N|STD_F_FWD_R_2|STD_EBUSTGLASS_N_MRS_2|STD_ECOMEHERE_N_A_N|STD_EFALLDEATH_N_N_N|STD_EFALLIMPACT_N_N_N|STD_EFLIPTABLE_N_A_N|STD_EPUSHBUTTONS_N_N_N|STD_EPUSHCRATE_N_A_N|STD_ESIGNALALARM_N_A_N|STD_ETYPING_N_N_N|STD_EWALL2WALK_N_MRS_2|STD_EWALL2WALK_N_PK_N|STD_EWALLIDLE_N_MRS_2|STD_EWALLIDLE_N_PK_N|STD_EWALLLOOK_LT_MRS_2|STD_EWALLLOOK_LT_PK_N|STD_EWALLLOOK_RT_MRS_2|STD_EWALLLOOK_RT_PK_N|STD_EWRENCHH_FRM_N_N|STD_EWRENCHH_N_N_N|STD_EWRENCHH_TO_N_N|STD_EWRENCHV_FRM_N_N|STD_EWRENCHV_N_N_N|STD_EWRENCHV_TO_N_N|STD_IPISS_N_A_A|STD_ATHREAT_DWN_P_N|STD_ATHREAT_FWD_P_N|STD_ATHREATYEL_DWN_P_N|STD_ATHREATYEL_FWD_P_N|STD_EEXAMINEWALL_N_A_N|STD_ERAGESHOOT_N_P_N|STD_ESABREMOCK_N_A_N|STD_RTOSTOP_N_PK_N|STD_ETALKBOTH_N_A_N|STD_ETALK_N_A_N|STD_EHEADNOD_N_A_N|STD_EHEADSHAKE_N_A_N|STD_EJUMPRAIL_N_A_N|STD_WTOSTOP_N_PK_A|STD_ESPIN180_LT_A_N|STD_ESPIN180_RT_A_N|STD_ETORUN_N_P_N|STD_ILEAN_N_P_N|STD_WBACKAIM_N_MS_2|STD_ETALKRIGHT_N_A_N|STD_ECLIMBLEDG_DWN_A_N|STD_ECLIMBLEDG_MID_A_N|STD_ECLIMBLEDGE_UP_A_N|STD_EDROPGRENADE_N_A_N|STD_EFRMSHADOW_N_MRS_2|STD_EFRMSHADOW_N_P_N|STD_EHANDTALK_FRM_P_N|STD_EHANDTALK_N_P_N|STD_EHANDTALK_TO_MRS_N|STD_EHANDTALK_TO_P_N|STD_EHANDTALK_FRM_MRS_N|STD_EHEADSET_FRM_P_N|STD_EHEADSET_MID_P_N|STD_EHEADSET_TO_P_N|STD_ESALUTE_FRM_MRS_N|STD_ESALUTE_N_MRS_N|STD_ESALUTE_TO_MRS_N|STD_ETALKLEFT_N_A_N|STD_ETALKLKLT_FRM_A_N|STD_ETALKLKLT_MID_A_N|STD_ETALKLKLT_TO_A_N|STD_ETALKLKRT_FRM_A_N|STD_ETALKLKRT_MID_A_N|STD_ETALKLKRT_TO_A_N|STD_ETORUN_N_MRS_2|STD_ETURN90_LT_A_N|STD_ETURN90_RT_A_N|STD_IGUNUP_N_A_N|STD_RONFIRE_N_N_N|STD_RONFIRETODTH_N_N_N|STD_RTOSTOP_N_MRS_2|STD_SSHOULDER_LT_N_N|STD_SUNHURT_BK_PK_N|STD_EDROPCROUCH_N_A_A|STD_TRUN_N_A_N|STD_W_N_PN_N|STD_WCARRY2_N_N_N|STD_WTALK_LT_MRS_2|A4_ASCRAMBLE_N_A_N|CCH_ENODLEFT_N_A_A|CCH_ENODRIGHT_N_A_A|CCH_ESCANTALK_LT_A_A|CCH_ESCANTALK_RT_A_A|CCH_IREADY_N_A_A|STD_FAUTOSWEEP_N_M_2|STD_L_N_MS_2|STD_ISTAND_N_A_N|STD_ECHOKESHOOT_N_A_N|STD_SONFIRE_2BK_N_N|STD_ETALK_FRM_A_N|STD_ETALK_TO_A_N|STD_JDROP_TO_A_N|STD_ATHREATSHT_DWN_P_N|LB_PHOLDLEG_LT_N_N|
+          |STD_EPUSHCRATE_N_N_N|STD_XCOCK_N_S_2|STD_STOKNEES_2BK_N_N|STD_SGUT_2SIDE_N_N|STD_XLADDERFRM_UP_A_A|STD_SGUNFROMHAND_N_N_N|CCH_ETOSTAND_N_A_N|STD_ININJA_N_P_N|STD_XHANDSPRING_FWD_A_N|STD_EGANGSALUTE_N_A_N|STD_WBACKWARDS_N_A_N|STD_SSABREDEATH_BK_N_N|STD_WSTEALTH_N_PK_N|STD_JTHROWSTAR_FWD_A_N|PRN_A_N_A_2|STD_EYELL_N_A_N|STD_IALERTLK_RT_MRS_2|STD_EPUSHBUTTONH_N_A_N|STD_IALERT_N_MRS_2|STD_RDYNAMIC_N_A_N|STD_WAIM_FWD_P_2|STD_A_FWD_P_2|STD_IETALKPOSE_N_A_N|STD_FRAPIDSWEEP_LT_P_2|STD_IALERTTRN_LT_P_N|STD_ESUPRISE90_LT_A_N|STD_FAUTOSWEEP_UP_M_2|STD_XATKPAUSE1_N_MRS_2|LB_PCRAWL_BK_P_N|SI_EWALLIDLE_N_A_N|SI_EWALLTALK_N_A_N|STD_ETOAIM_N_P_2|STD_A_UP_P_2|SI_EWALLFEAR_N_A_N|STD_ESALUTE_TO_A_N|STD_ESALUTE_N_A_N|STD_ESALUTE_FRM_A_N|STD_ESALUTATIONS_N_A_N|STD_ECLIMBSHAFT_N_A_N|STD_XATKPAUSE2_N_PK_N|CCH_W_N_A_N|CCH_EWALK2CCH_N_A_N|CCH_ETALK_DWN_P_N|STD_ITALKPOSE_UP_A_N|CCH_ITALKPOSE_DWN_A_N|STD_ETALK_UP_A_N|CCH_EHEADNOD_N_A_N|CCH_ECCH2WALK_N_A_N|STD_XATKPAUSE1_N_PK_N|STD_WFAST_N_A_N|STD_ERAGEIDLE_N_P_N|CCH_XCCHCOWER_UP_A_A|STD_IETALKPOSE_RT_A_N|STD_EBOOKLOOK_N_A_N|STD_EBOOKSCAN_N_A_N|STD_XOPENDOOR_N_A_N|STD_XCROUCH_DWN_PK_A|CCH_EHEADSET_FRM_A_N|CCH_EHEADSET_MID_A_N|STD_SHEAD_2FRNT_N_N|STD_W_N_MRS_2|STD_EDKRAIM_N_A_N|CCH_EHAWKKNEES_N_N_N|STD_EDKRAIMTALK_N_A_N|STD_EDKRFIRELK_RT_A_N|CCH_EHAWKDEATH_N_N_N|CCH_EHAWKKNEETLK_N_N_N|CCH_EHAWKCROUCH_N_A_N|CCH_EHEADSET_TO_A_N|LB_ESLIDE_N_PK_N|STD_A_FWD_P_CB|STD_IGUNUPLOOK_N_A_N|STD_FRAPID_N_P_2|STD_EDKRAIMLK_FWD_A_N|STD_EWHIRL_RT_A_N|STD_FSWEEPUP_FRM_A_A|STD_FSWEEPUP_TO_A_A|STD_XTAKECOVER_N_A_N|STD_ESABREBLUFF_N_A_A|STD_EAUTOSWEEP_N_PM_A|CCH_F_FWD_S_2|STD_F_FWD_P_CB|STD_SOUTWINDOW_N_A_N|STD_XCROUCH_DWN_MRS_2|STD_XCROUCH_DWN_P_2|STD_TGRENADE_N_A_N|STD_TUNDER_N_A_N|CCH_XCROUCH_UP_L_2|STD_XCROUCH_DWN_L_2|STD_XCROUCH_DWN_P_A|STD_RAIM_N_MRS_2|STD_WFIRE_FWD_MS_2|CCH_AFIRE_FWD_MS_2|STD_F_FWD_M_2|CCH_F_FWD_M_2|STD_EPUSHOVER_N_PK_A|STD_EMERCHALL_N_A_A|STD_EMERCHONE_N_A_A|STD_IEMERCHANT_N_A_A|STD_EMERCHWAVE_RT_A_A|STD_EMERCHTALK_N_A_A|STD_EMERCHWAVE_LT_A_A|STD_EBEG_N_A_A|STD_ICLEANGUN2_N_PK_N|CCH_XCCHCOWER_N_A_N|
+          |SOLID_NOT|SOLID_SOLID|SOLID_BSP|
+          |DAMAGE_NO|DAMAGE_YES|DAMAGE_AIM|DAMAGE_NO_RADIUS|
+          |HELI_TAKEOFF|HELI_LAND|HELI_REPAIR|HELI_REARM|HELI_GOTO_COORDS|HELI_GOTOREL_ENTITY|HELI_GOTOREL_ENT_X|HELI_GOTOREL_ENT_Y|HELI_GOTOREL_ENT_Z|HELI_MOVEREL|HELI_PAUSE|HELI_FACE_RELENT|HELI_FACE_ABSCOORDS|HELI_FACE_ABSDIR|HELI_FACE_RELCOORDS|HELI_PILOT_FACERELENT|HELI_PILOT_FACERELCOORDS|HELI_PILOT_FACEABSCOORDS|HELI_GUNNER_FACERELENT|HELI_GUNNER_FACERELCOORDS|HELI_GUNNER_FACEABSCOORDS|HELI_STRAFE_RT|HELI_STRAFE_LT|HELI_ROCKETS_ENABLE|HELI_ROCKETS_DISABLE|HELI_CHAINGUN_ENABLE|HELI_CHAINGUN_DISABLE|HELI_FIREAT_RELENT|HELI_FIREAT_ABSCOORDS|HELI_FIREAT_RELCOORDS|HELI_AUTOFIRE_ON|HELI_AUTOFIRE_OFF|HELI_HOVER_PASSIVE|HELI_HOVER_AGGRESSIVE|HELI_SET_WORLDMINS|HELI_SET_WORLDMAXS|HELI_SET_MAXHEALTH|HELI_SET_HEALTH|HELI_SET_DEATHDEST|HELI_SET_TRACEDIMS|HELI_AI|HELI_WAYPOINT|HELI_VOLUME|HELI_VOLUMEMINS|HELI_VOLUMEMAXS|HELI_DEBUG|HELI_CHANGE_SKIN|HELI_CHANGE_BODY|HELI_OUT_OF_CONTROL|
+          |TANK_GOTOCOORDS|TANK_FIRECANNONATCOORDS|TANK_MACHGUNAUTO|TANK_DIE|TANK_AIMTURRET|
+          |HEAD|NECK|LSHOULDER|RSHOULDER|CHEST|GUT|GROIN|GUNHAND|NUG_O_POPPIN|
+          )\b
+      scope: string markup.italic
+    - match: \b(kill)\b
+      scope: variable.parameter
+    - match: \b(SCRIPT_RELEASE)\b
+      scope: constant.language markup.bold
+  strings:
+    - match: '"'
+      scope: variable.language
+      push:
+        - meta_include_prototype: false
+        - meta_scope: variable.language
+        - match: '""'
+          scope: variable.language
+        - match: '"'
+          scope: variable.language
+          pop: true
+  strings2:
+    - match: '"'
+      scope: string
+      push:
+        - meta_include_prototype: false
+        - meta_scope: string
+        - match: '""'
+          scope: string
+        - match: '"'
+          scope: string
+          pop: true
+  comments:
+    - meta_include_prototype: false
+    - match: /\*
+      scope: punctuation.definition.comment
+      push:
+        - meta_scope: comment.block
+        - match: \*/
+          scope: punctuation.definition.comment
+          pop: true
+    - match: (//)
+      scope: comment
+      push: inside-number-sign-comment
+  inside-number-sign-comment:
+    - meta_include_prototype: false
+    - meta_scope: comment
+    - match: \n
+      pop: true
+  numbers:
+    - match: (\-) #|(\+)|(\!)|(\=)|(\<)|(\>)
+      scope: keyword.punctuation.definition.keyword
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric
+  always:
+    - include: strings
+    - include: numbers
+  n:
+    - match: $\n?
+      pop: true

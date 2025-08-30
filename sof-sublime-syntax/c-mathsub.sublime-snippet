@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[sp_sc_cvar_math_sub ${1:CVAR} ${2:VALUE}]]></content>
+    <!-- Optional: Tab trigger to activate the snippet -->
+    <tabTrigger>c-mathsub</tabTrigger>
+    <!-- Optional: Scope the tab trigger will be active in -->
+    <scope>source.func</scope>
+    <!-- Optional: Description to show in the menu -->
+    <description>Sofplus snippets</description>
+</snippet>

@@ -1,0 +1,24 @@
+{
+  "scopeName": "source.gin",
+  "name": "SoF - GIN",
+  "patterns": [
+    { "include": "#numbers" },
+    { "name": "keyword.other.gin", "match": "^File:" },
+    { "name": "keyword.other.gin", "match": "^3DSMax BBox Min:" },
+    { "name": "keyword.other.gin", "match": "^3DSMax BBox Max:" },
+    { "name": "keyword.other.gin", "match": "^Sequence" },
+    { "name": "keyword.other.gin", "match": "^Frame Time" },
+    { "name": "keyword.other.gin", "match": "^NoteKeys:" },
+    { "name": "keyword.other.gin", "match": "^StartFrame" },
+    { "name": "keyword.other.gin", "match": "^Materials" },
+    { "include": "#strings" }
+  ],
+  "repository": {
+    "numbers": { "patterns": [ { "name": "constant.numeric.gin", "match": "(?:[=+\-])|(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
+    "strings": {
+      "patterns": [ { "name": "string.quoted.double.gin", "begin": "\"", "end": "\"" } ]
+    }
+  }
+}
+
+

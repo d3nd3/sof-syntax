@@ -1,0 +1,37 @@
+{
+  "scopeName": "source.gpm",
+  "name": "SoF - Ghoul Player Model",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#paths" },
+    { "include": "#misc" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.gpm", "match": "//.*$" } ] },
+    "strings": { "patterns": [ { "name": "string.quoted.double.gpm", "begin": "\"", "end": "\"" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.gpm", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
+    "keywords": {
+      "patterns": [
+        { "name": "constant.language.gpm", "match": "\\bNoteam\\b" },
+        { "name": "keyword.gpm", "match": "\\b(?:enemy/meso|enemy/female)\\b" },
+        { "name": "keyword.gpm", "match": "\\b(?:meso_menu|fem_menu|meso_player|fem_play)\\b" },
+        { "name": "keyword.gpm", "match": "\\b(?:playerarbul|playerboss|playerbulbul|playerbulbulcoat|playerbulbulti|playerbultibul|playercalfcuff|playercoat|playermask|playersuit|playerbulti|playertiti)\\b" },
+        { "name": "entity.name.gpm", "match": "\\benemy/dth/[a-z]+\\b" }
+      ]
+    },
+    "paths": {
+      "patterns": [ { "name": "string.other.path.gpm", "match": "[A-Za-z0-9_./\\\\\\-]+\\.gbm\b" } ]
+    },
+    "misc": {
+      "patterns": [
+        { "name": "storage.type.gpm", "match": "_+\\w+" },
+        { "name": "variable.parameter.gpm", "match": "[{}]" }
+      ]
+    }
+  }
+}
+
+

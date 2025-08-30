@@ -1,0 +1,25 @@
+{
+  "scopeName": "source.def",
+  "name": "SoF - Definition",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#numbers" },
+    {
+      "name": "meta.quaked.def",
+      "begin": "/\\*",
+      "end": "\\*/",
+      "patterns": [
+        { "name": "entity.other.inherited-class.def", "match": "\\b(?:QUAKED|QUAK-ED)\\b" },
+        { "name": "variable.function.def", "match": "\\w+(?=\\s*\\()" },
+        { "name": "string.quoted.double.def", "match": "\\(|\\)" },
+        { "include": "#numbers" }
+      ]
+    }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.block.def", "begin": "/\\*", "end": "\\*/" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.def", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] }
+  }
+}
+
+

@@ -1,0 +1,104 @@
+%YAML 1.2
+---
+name: SoF - Ghoul Player Model
+file_extensions: [gpm]
+scope: source.gpm
+first_line_match: \b(enemy/meso|enemy/female)\b
+contexts:
+  prototype:
+    - include: comments
+  main:
+    - include: numbers
+    - include: NOTEAM
+
+    - match: \b(enemy/meso|enemy/female)\b
+      scope: keyword
+    - match: (meso_menu)
+      scope: keyword
+      push:
+        - match: '[1-9]'
+          scope: entity.name.function
+          pop: true
+    - match: (fem_menu)
+      scope: keyword
+      push:
+        - match: '[1-2]'
+          scope: entity.name.function
+          pop: true
+    - match: \b(meso_player|fem_play)\b
+      scope: keyword
+    - match: \b(playerarbul|playerboss|playerbulbul|playerbulbulcoat|playerbulbulti|playerbultibul|playercalfcuff|playercoat|playermask|playersuit|playerbulti|playertiti)\b
+      scope: keyword
+    - match: \b(enemy/dth/)\b
+      scope: keyword
+      push:
+        - meta_scope: entity.name
+        - match: '[a-z]+'
+          pop: true
+    - match: '\w+'
+      scope: string
+    - match: '{'
+      scope: variable
+      push:
+        - include: numbers
+        - match: \b(a|b|c|f|h|hd|md|gz)\b
+          scope: variable.parameter
+        - match: (\s+\w+_+\w+)
+          scope: storage.type
+          push:
+            - meta_include_prototype: false
+            - include: numbers
+            - match: //.*
+              scope: markup.raw punctuation.definition.raw diff.deleted.char
+              pop: true
+            - match: $\n?
+              pop: true
+        - match: (.*\.gbm)
+          scope: string
+          push:
+            - include: numbers
+            - match: '\w+'
+              scope: storage.type
+            - match: $\n?
+              pop: true
+        - match: (_+\w+)
+          scope: storage.type
+        - match: '(?=})'
+          scope: variable
+          pop: true
+    - match: '}'
+      scope: variable
+      pop: true
+  NOTEAM:
+    - match: Noteam
+      scope: constant.language
+    - match: '"'
+      push: string
+  comments:
+    - meta_include_prototype: false
+    - match: //
+      scope: comment
+      push: inside-number-sign-comment
+  inside-number-sign-comment:
+    - meta_include_prototype: false
+    - meta_scope: comment
+    - match: \n
+      pop: true
+  string:
+    - meta_scope: variable.parameter.function
+    - match: '"'
+      pop: true
+  numbers:
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric

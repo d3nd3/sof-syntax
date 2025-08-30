@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[sp_sc_cvar_substr ${1:DST_CVAR} ${2:SRC_CVAR} ${3:START} ${4:LENGTH}]]></content>
+    <!-- Optional: Tab trigger to activate the snippet -->
+    <tabTrigger>c-substr</tabTrigger>
+    <!-- Optional: Scope the tab trigger will be active in -->
+    <scope>source.func</scope>
+    <!-- Optional: Description to show in the menu -->
+    <description>Sofplus snippets</description>
+</snippet>

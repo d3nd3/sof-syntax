@@ -1,0 +1,12 @@
+<snippet>
+    <content><![CDATA[sp_sc_flow_if ${1:text} ${2:cvar} ${3:cvarname} ${4:==} ${5:cvar} ${6:cvarname}
+{
+	$7
+}]]></content>
+    <!-- Optional: Tab trigger to activate the snippet -->
+    <tabTrigger>if</tabTrigger>
+    <!-- Optional: Scope the tab trigger will be active in -->
+    <scope>source.func</scope>
+    <!-- Optional: Description to show in the menu -->
+    <description>Sofplus snippets</description>
+</snippet>

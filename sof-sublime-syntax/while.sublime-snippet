@@ -1,0 +1,12 @@
+<snippet>
+    <content><![CDATA[sp_sc_flow_while ${1:number} ${2:cvar} ${3:~counter} ${4:<=} ${5:cvar} ${6:cvarname}
+{
+	$7
+}]]></content>
+    <!-- Optional: Tab trigger to activate the snippet -->
+    <tabTrigger>while</tabTrigger>
+    <!-- Optional: Scope the tab trigger will be active in -->
+    <scope>source.func</scope>
+    <!-- Optional: Description to show in the menu -->
+    <description>Sofplus snippets</description>
+</snippet>

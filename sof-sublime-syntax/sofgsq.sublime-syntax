@@ -1,0 +1,18 @@
+%YAML 1.2
+---
+name: SoF - Ghoul Sequences
+file_extensions: [gsq]
+scope: source.gsq
+contexts:
+  main:
+    - meta_scope: variable.function
+    - match: \#
+      scope: keyword
+      push:
+        - match: .+$\n
+          scope: entity.name
+          pop: true
+    - match: \_
+      scope: string
+    - match: \d
+      scope: constant.numeric

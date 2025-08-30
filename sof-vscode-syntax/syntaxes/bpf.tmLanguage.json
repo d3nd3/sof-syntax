@@ -1,0 +1,38 @@
+{
+  "scopeName": "source.bpf",
+  "name": "SoF - Hidebot Personality File",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#numbers" },
+    { "include": "#strings" },
+    { "include": "#sections" },
+    { "include": "#assignments" },
+    { "include": "#userinfo" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.number-sign.bpf", "match": "#.*$" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.bpf", "match": "\\b\\d+\\b" } ] },
+    "strings": { "patterns": [ { "name": "string.quoted.double.bpf", "begin": "\"", "end": "\"" } ] },
+    "sections": {
+      "patterns": [
+        { "name": "entity.other.inherited-class.bpf", "match": "^\\[\\s*(?:SECT|sect|SECTEND|sectend)\\s*\\]" }
+      ]
+    },
+    "assignments": {
+      "patterns": [
+        { "name": "keyword.declaration.bpf", "match": "\\b(?:accuracy|fov|turning_speed|view_distance|general_intelligence|canchat|chatfreq|SECT|SECTEND)\\b" },
+        { "name": "keyword.operator.assignment.bpf", "match": "=" }
+      ]
+    },
+    "userinfo": {
+      "patterns": [
+        { "name": "keyword.declaration.userinfo.bpf", "match": "^userinfo\\b" },
+        { "name": "keyword.operator.bpf", "match": "[=\-\*\+<>]" },
+        { "name": "entity.name.bpf", "match": "\\b(?:name|skin)\\b" },
+        { "name": "constant.character.escape.backslash.bpf", "match": "\\\\" }
+      ]
+    }
+  }
+}
+
+

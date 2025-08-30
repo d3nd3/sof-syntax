@@ -1,0 +1,72 @@
+%YAML 1.2
+---
+name: SoF - SoF QData
+file_extensions: [qdt]
+scope: source.qdt
+contexts:
+  main:
+    - include: numbers
+    - include: always
+    - match: ^\$
+      scope: keyword
+      push:
+        - include: always
+        - match: \b(mip\s+)\b
+          scope: entity.name.function
+          push:
+            - include: always
+            - match: \b(\w|-)+\s+\b
+              scope: variable.parameter.function
+              set:
+                - match: \b(?:[\d']*\d)\s+\b(?:[\d']*\d)\s+\b(?:[\d']*\d)\s+\b(?:[\d']*\d)\s+
+                  scope: constant.character.escape
+                  set:
+                    - include: numbers
+                    - include: always
+                      comment: mipparm_t
+                    - meta_scope: meta.method.body
+                    - match: \b(pushpull|water|slime|lava|window|mist|origin|playerclip|monsterclip)\b
+                      scope: keyword
+                    - match: \b(hint|skip|slick|sky|warping|trans33|trans66|flowing|nodraw|alpha|undulate|skyreflect)\b
+                      comment: Excluded from boundary |- metal, stone, wood
+                      scope: keyword
+                    - match: \b(light|animspeed|anim|alt|damage|material)\b
+                      scope: variable.function
+                    - match: \b(GL_ZERO|GL_ONE|GL_SRC_COLOR|GL_ONE_MINUS_SRC_COLOR|GL_DST_COLOR|GL_ONE_MINUS_DST_COLOR|GL_SRC_ALPHA|GL_ONE_MINUS_SRC_ALPHA|GL_DST_ALPHA|GL_ONE_MINUS_DST_ALPHA|GL_SRC_ALPHA_SATURATE)\b
+                      scope: markup.italic
+                    - match: \b(scale|mip|detail|spherical|m_nomip|m_detail|m_spherical|m_parental)\b
+                      scope: variable.function
+                    - match: \w+\.m32
+                      scope: string.quoted.double
+                    - match: \b([0-9]\s+|[0-9]+(.))$\n?|$\n?\b
+                      scope: constant.character.escape
+                      pop: true
+        - match: $\n?
+          pop: true
+        - match: \b(pak|mipdir|picdir|load|texturemix|tmixdir|file|dir|maps|include)\b
+          scope: entity.name.function
+          push:
+            - match: .*
+              scope: variable.parameter.function
+              pop: true
+        - match: $\n?
+          pop: true
+  always:
+    - match: (//)|(\#)|(\;)
+      push:
+        - meta_scope: comment
+        - match: $\n?
+          pop: true
+    - match: \/\*
+      push:
+        - meta_scope: comment
+        - match: \*\/
+          pop: true
+    - match: '"'
+      push:
+        - meta_scope: variable.parameter.function
+        - match: '"'
+          pop: true
+  numbers:
+    - match: \b([0-9]\s+|[0-9]+(.))\b
+      scope: constant.character.escape

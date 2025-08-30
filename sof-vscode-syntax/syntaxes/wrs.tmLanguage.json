@@ -1,0 +1,20 @@
+{
+  "scopeName": "source.wrs",
+  "name": "SoF - Waypoint Routes",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#numbers" },
+    { "name": "keyword.other.wrs", "match": "\\b(?:begin|end)\\b" },
+    { "name": "entity.name.function.wrs", "match": "\\b(?:dm|team1|team2)\\b" },
+    { "name": "variable.function.bold.wrs", "match": "c[0-9]+" },
+    { "name": "keyword.version.wrs", "match": "^Version" },
+    { "include": "#strings" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.wrs", "match": "//.*$" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.wrs", "match": "\\b\\d+\\b" } ] },
+    "strings": { "patterns": [ { "name": "string.quoted.double.wrs", "begin": "\"", "end": "\"" } ] }
+  }
+}
+
+

@@ -1,0 +1,31 @@
+{
+  "scopeName": "source.rmf",
+  "name": "SoF - Raven Menu Format",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#tags" },
+    { "include": "#colors" }
+  ],
+  "repository": {
+    "comment": { "patterns": [ { "name": "comment.line.double-slash.rmf", "match": "//.*$" } ] },
+    "strings": {
+      "patterns": [
+        { "name": "string.quoted.double.rmf", "begin": "\"", "end": "\"" },
+        { "name": "markup.heading.package.rmf", "begin": "\\^", "end": "\\^" }
+      ]
+    },
+    "numbers": { "patterns": [ { "name": "constant.numeric.rmf", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
+    "tags": {
+      "patterns": [
+        { "name": "keyword.control.rmf", "match": "<\\s*(?:stm|frame|key|ikey|ckey|alias|set|timeout|cinclude|cninclude|einclude|exinclude|comment|includecvar|cbuf|include|config|exitcfg|tint|font|br|hbr|HBR|center|normal|left|right|cursor|defaults|translate|emote|semote|demote|autoscroll|tab|dmnames|strings|backdrop|blank|hr|vbar|users|chat|rooms|text|ctext|image|list|slider|ticker|input|popup|setkey|selection|ghoul|bghoul|gpm|filebox|filereq|loadbox|serverbox|serverdetail|players|listfile)\\b" }
+      ]
+    },
+    "colors": {
+      "patterns": [ { "name": "support.constant.color.rmf", "match": "\\b(?:vbargray|normaltext|hilitetext|backtint|tipback|tip|icontint|iconhilite|hgreen|hblue|lblue|lred|clear|black|transblack|semiblack|smokey|transgray|darkgray|gray|white|orange|red|blue|green|purple|cyan|header|yellow)\\b" } ]
+    }
+  }
+}
+
+

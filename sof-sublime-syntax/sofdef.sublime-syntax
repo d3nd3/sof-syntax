@@ -1,0 +1,66 @@
+%YAML 1.2
+---
+name: SoF - Definition
+file_extensions: [def]
+scope: source.def
+first_line_match: \/\*QUAKED
+contexts:
+  main:
+    - include: always
+    - match: (\/\*)
+      scope: entity.other.inherited-class
+      push:
+      - match: \b(QUAKED\s)|(QUAK-ED\s)\b
+        scope: entity.other.inherited-class
+        push:
+          - match: \w+\s+(?=\()
+            scope: variable.function
+          - match: \(
+            scope: string.quoted.double
+          - include: numbers
+          - match: (\)\s+)(?=\()|(\))(?=\()
+            scope: string.quoted.double
+            set:
+              - match: \(
+                scope: string.quoted.double
+              - include: numbers
+              - match: (\)\s+)(?=\()|(\))(?=\()
+                scope: string.quoted.double
+                set:
+                  - match: \(
+                    scope: string.quoted.double
+                  - include: numbers
+                  - match: \)\s+
+                    scope: string.quoted.double
+                    set:
+                      - meta_scope: variable.parameter.function
+                      - match: '\n'
+                        pop: true
+                      - match: '\:'
+                        pop: true
+                      - match: .*
+                        scope: variable.parameter.function
+                        set:
+                        - match: (\*\/)
+                          scope: entity.other.inherited-class
+                          pop: true
+                        - match: '\n'
+                          pop: true
+  always:
+    - match: \=
+      scope: keyword.other.using.source.cs
+      pop: true
+  numbers:
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric

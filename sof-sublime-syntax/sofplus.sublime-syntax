@@ -1,0 +1,468 @@
+%YAML 1.2
+---
+name: SoF - SoFPlus Function
+file_extensions: [func]
+scope: source.func
+first_line_match: \b.*function *._init\b
+contexts:
+  prototype:
+    - include: comment
+  main:
+    - include: commands
+    - include: function
+
+  function:
+    - match: "function"
+      scope: keyword
+      push:
+        - match: \b(.*\w+$)|(.*?)(?=\()\b
+          scope: entity.name.function
+        # opening paranthesis
+        - match: \(
+          push:
+          - match: \~
+            scope: variable.parameter
+            comment: FIXME- Tilde should only match behind a cvar
+          - match: ','
+            scope: keyword.other
+          - match: \*
+            scope: variable.parameter
+          # closing parenthesis
+          - match: \)
+            pop: true
+        # opening body
+        - match: '{'
+          push:
+            - include: macroexpand
+            - include: localvar
+            - include: numbers
+            - include: strings
+            - include: commands
+            - include: func
+            # closing body
+            - match: '(?=})'
+              pop: true
+        # closing body function
+        - match: '}'
+          pop: true
+  func:
+    - match: (?<!~)\b(sp_sc_flow_if|sp_sc_flow_while|else)\b
+      scope: keyword.control
+      push:
+        - match: '\b(number|text|itext)\b'
+          scope: constant.other
+        - match: '\b(\sN\s+.?|\sn\s+.?|\sT\s+.?|\st\s+.?|\sTI\s+.?|\sti\s+.?)\b'
+          scope: invalid.deprecated
+        - match: '\b(cvar|val)\b'
+          scope: string.meta.string
+        - match: '\s(\>|\<|\>=|\<=|==|!=|=)\s'
+          scope: keyword.operator
+        - include: always
+        - match: '{'
+          push:
+            - include: func
+            - include: macroexpand
+            - include: localvar
+            - include: strings
+            - include: commands
+            # closing ifthing1
+            - match: '(?=})'
+              pop: true
+        # closing ifthing2
+        - match: '}'
+          pop: true
+        - match: '(?=\n)'
+          push:
+            - include: func
+            - include: macroexpand
+            - include: localvar
+            - include: strings
+            - include: commands
+            - match: '(?=})'
+              pop: true
+
+  commands:
+    - meta_scope: variable
+
+### Operation type commands ###
+    - match: (?<!~)\b(wait|stop|stopsound|return|menuoff|popmenu|refresh|killmenu)\b
+      scope: keyword.other
+      push: endstatement
+
+    - match: |-
+        (?<!~)\b(
+        |path|help|info|kill|cpuid|elbow|ninja|pause|score|skins|reload|status|cmdlist|entlist|heretic|ip_list|loading|newsave|phantom|players|vid_front|vid_restart|rawshot|viewpos|z_stats|bigelbow|bindlist|changing|cl_touch|conchars|cvarlist|hackteam|itemdrop|itemnext|itemprev|precache|
+        |filter_write|clear|sizeup|sizedown|minimise|usermisc|weapnext|weapprev|itemuse|ff_usejoy|freshgame|heartbeat|imagelist|playlevel|quickload|quicksave|reconnect|reloadall|savesleft|soundinfo|soundlist|unbindall|useritems|savekeys|teamview|userammo|userinfo|getgamestats|
+        |putaway|vid_modes|centerview|disconnect|gl_strings|killserver|listignore|playerlist|saveconfig|screenshot|serverinfo|serverstop|togglechat|weapondrop|weaponlose|destroyents|ff_usemouse|filter_list|gsc_connect|listpickups|pingservers|reset_predn|snd_restart|updateinven|userweapons|
+        |hackkillbots|list_dmflags|toggleconsole|defaultweapons|gsc_disconnect|maxfpsfromrate|updateinvfinal|weaponbestsafe|gsc_getchannels|killallmonsters|givemoretutorial|turnonmissionmsg|weaponbestunsafe|turnoffmissionmsg|givesnipertutorial|joy_advancedupdateexit|
+        )\b
+      scope: string
+      push: endstatement
+
+### Function type commands ###
+    - match: (?<!~)\b(error|quit|exit|wipe)\b
+      scope: keyword.other
+      push: endstatement
+
+    - match: (?<!~)\b(rcon)\b
+      scope: keyword.other
+
+    - match: (?<!~)\b(cmd)\b
+      scope: keyword.control
+      push:
+        - match: '\.[a-zA-Z0-9]+(\w+)'
+          scope: variable.function
+        - match: |-
+            \b(
+            |players|say|say_team|Say_team|score|help|playlevel|elbow|bigelbow|defaultweapons|updateinvfinal|go|heretic|ninja|phantom|weapnext|weapprev|itemdrop|itemnext|itemprev|itemuse|reload|kill|killallmonsters|putaway|wave|gimme|teamview|playerlist|entlist|destroyents|deletepoint|movepoint|
+            |givesnipertutorial|givemoretutorial|turnofmissionmsg|turnonmissionmsg|listpickups|setpoint|savepoints|loadpoint|exportpoint|pointhelp|setflee|setfleefriendly|setfleeenemy|toggleignore|startregions|toggleboxes|cleargrid|baselines|begin|configstrings|ghoulstring|
+            )\b
+          scope: variable.function
+        - match: gserver
+          scope: variable.function
+          push:
+            - match: \b(sizematters|listfiles|list_files|imagelist|useage|usage|cacheghb|cache_ghb|precacheall|precache_all|lightambient|light_ambient|lightsmooth|light_smooth|speed|flush_mesh_cache|autoprep|auto_prep|reload|summary|mem_start|mem_end|mem|leakage|stats)\b
+            - match: test
+              scope: string
+              push:
+                - include: macroexpand
+                - match: \b([a-zA-Z2-9]+)\b
+                  scope: invalid
+                - match: '(?<!~)[0-1]'
+                  scope: variable.language
+                - include: localvar
+                - include: n
+                  pop: true
+            - include: n
+        - include: endstatement
+
+    - match: |-
+        (?<!~)\b(
+        |or|xor|and|zero|map|add|dir|go|avi|sky|kick|load|menu|ping|play|save|wave|link|cloud|gimme|ignore|record|messagemode|select|addfave|bot_add|bot_rem|condump|connect|demomap|fx_load|fx_save|gamemap|gsc_ban|remfave|filter_add|adddownload|loadpoint|ff_tension|forcesong|
+        |winstart|checkpass|changepass|terrain|dumpuser|gsc_join|gsc_private|gsc_setusermode|gsc_kick|gsc_part|gsc_talk|Say_team|say_team|unignore|ff_spring|intermission|messagemode2|serverrecord|serverstatus|weaponselect|filter_remove|gsc_gettopic|gsc_getusers|gsc_settopic|sv_precache|timerefresh|alias|
+        )\b
+      scope: variable.function
+      push:
+      - include: always
+      - include: endstatement
+
+    - match: gserver
+      scope: variable.function
+      push:
+        - include: always
+        - match: \b(sizematters|listfiles|list_files|imagelist|useage|usage|lightambient|light_ambient|lightsmooth|light_smooth|speed|flush_mesh_cache|flushmeshcache|reload|summary|mem_start|mem_end|mem|leakage|stats)\b
+          scope: string
+        - match: (test)|(auto_prep)|(autoprep)|(cache_ghb)|(cacheghb)|(precacheall)|(precache_all)
+          scope: string
+          push:
+            - include: macroexpand
+            - match: \b([a-zA-Z2-9]+)\b
+              scope: invalid
+            - match: '(?<!~)[0-1]|(\!)'
+              scope: variable.language
+            - include: localvar
+            - include: n
+              pop: true
+        - include: n
+
+    - match: (?<!~)\b(bind|unbind)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: (\,)|(\')|(\[)|(\])|(\\)|(\/)|(\.)|(\-)|(\=)|(\!)|(\-)|(\`)
+          scope: string
+        - match: \b(1|2|3|4|5|6|7|8|9|0|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|tab|enter|escape|space|backspace|uparrow|leftarrow|rightarrow|downarrow|lalt|ralt|lctrl|rctrl|lshift|rshift|f1|f2|f3|f4|f5|f6|f7|f8|f9|f10|f11|f12|ins|del|pgdn|pgup|home|end|mouse1|mouse2|mouse3|mouse4|mouse5|mouse1dbl|mouse2dbl|mouse3dbl|mouse4dbl|mouse5dbl|joy1|joy2|joy3|joy4|aux1|aux2|aux3|aux4|aux5|aux6|aux7|aux8|aux9|aux10|aux11|aux12|aux13|aux14|aux15|aux16|aux17|aux18|aux19|aux20|aux21|aux22|aux23|aux24|aux25|aux26|aux27|aux28|aux29|aux30|aux31|aux32|kp_home|kp_uparrow|kp_pgup|kp_leftarrow|kp_5|kp_rightarrow|kp_end|kp_downarrow|kp_pgdn|kp_enter|kp_ins|kp_del|kp_fslash|kp_minus|kp_plus|mwheelup|mwheeldown|pause|semicolon|caps|kp_scroll|kp_numlock|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|TAB|ENTER|ESCAPE|SPACE|BACKSPACE|UPARROW|LEFTARROW|RIGHTARROW|DOWNARROW|LALT|RALT|LCTRL|RCTRL|LSHIFT|RSHIFT|F1|F2|F3|F4|F5|F6|F7|F8|F9|F10|F11|F12|INS|DEL|PGDN|PGUP|HOME|END|MOUSE1|MOUSE2|MOUSE3|MOUSE4|MOUSE5|MOUSE1DBL|MOUSE2DBL|MOUSE3DBL|MOUSE4DBL|MOUSE5DBL|JOY1|JOY2|JOY3|JOY4|AUX1|AUX2|AUX3|AUX4|AUX5|AUX6|AUX7|AUX8|AUX9|AUX10|AUX11|AUX12|AUX13|AUX14|AUX15|AUX16|AUX17|AUX18|AUX19|AUX20|AUX21|AUX22|AUX23|AUX24|AUX25|AUX26|AUX27|AUX28|AUX29|AUX30|AUX31|AUX32|KP_HOME|KP_UPARROW|KP_PGUP|KP_LEFTARROW|KP_5|KP_RIGHTARROW|KP_END|KP_DOWNARROW|KP_PGDN|KP_ENTER|KP_INS|KP_DEL|KP_FSLASH|KP_STAR|KP_MINUS|KP_PLUS|MWHEELUP|MWHEELDOWN|PAUSE|SEMICOLON|CAPS|KP_SCROLL|KP_NUMLOCK|\'|\[|\]|\\|\/|\.|\-|\=)\b
+          scope: string
+        - match: (\s+\+)(?=[a-zA-Z0-9]+)
+          scope: keyword
+        - match: ';'
+          scope: keyword
+          pop: true
+        - include: n
+
+    - match: (?<!~)\b(subliminal)\b
+      scope: diff.inserted.char
+      push: endstatement
+
+    - match: (?<!~)\b(echo|say)\b
+      scope: variable.function
+      push:
+        - include: always
+        - meta_scope: string
+        - match: '[a-zA-Z0-9]+'
+          scope: markup.italic
+        - include: endstatement
+
+    - match: (?<!~)\b(set_dmflags|unset_dmflags)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: '[0-9]+'
+          scope: constant.numeric
+        - include: endstatement
+
+    - match: (?<!~)\b(setenv)\b
+      scope: variable.function
+      push:
+        - match: \=
+          scope: keyword.other
+        - include: endstatement
+
+    - match: (?<!~)\b(set)\b
+      scope: variable.function
+      push:
+        - include: macroexpand
+        - include: localvar1
+        - include: strings
+        - match: '([0-9]|[a-zA-Z0-9]+(\w+)|[0-9](\@|\%|\?|\&|\*|\(|\)|\_|\+|\!)+)'
+          set:
+            - match: (?<!~)\b([wW]|[iI]|[aA]|[mM]|[uU]|[sS])\b
+              scope: storage.type markup.bold markup.italic
+              pop: true
+            - include: endstatement
+        - include: endstatement
+
+    - match: (?<!~)\b(sset)\b
+      scope: variable.function
+      push:
+        - include: macroexpand
+        - include: localvar1
+        - include: strings
+        - match: '([0-9]|[a-zA-Z0-9]+(\w+)|[0-9](\@|\%|\?|\&|\*|\(|\)|\_|\+|\!)+)'
+        - include: endstatement
+
+    - match: \b(bot_name[0-9]+)
+      push:
+        - match: '\?\?\?\?\?\?'
+          scope: constant.language
+        - include: endstatement
+
+    - match: (\!)|(\+)|(\-)
+      comment: FIXME- Incomelete "match". Needs regex to filter
+      scope: keyword.operator
+      push: endstatement
+
+### Sofplus ###
+    - match: |-
+        (?<!~)\b(
+        |sp_sc_alias|sp_sc_cvar_append|sp_sc_cvar_append_newline|sp_sc_cvar_big_text|sp_sc_cvar_copy|sp_sc_cvar_copy_latched|sp_sc_cvar_escape|sp_sc_cvar_math_abs|sp_sc_cvar_math_add|sp_sc_cvar_math_ceil|sp_sc_cvar_math_div|sp_sc_cvar_math_floor|sp_sc_cvar_math_mod|sp_sc_cvar_math_mul|
+        |sp_sc_cvar_math_sqrt|sp_sc_cvar_math_sub|sp_sc_cvar_nbsp|sp_sc_cvar_no_color|sp_sc_cvar_random_float|sp_sc_cvar_random_int|sp_sc_cvar_split|sp_sc_cvar_sset|sp_sc_cvar_substr|sp_sc_cvar_unescape|sp_sc_cvar_unhex|sp_sc_cvar_hex|sp_sv_client_cvar_set|sp_sc_cvar_len|sp_sc_info_net|
+        |sp_sc_info_net_reset|sp_sc_info_time|sp_sc_uptime|sp_sv_client_check|sp_sv_info_client|sp_sv_info_client_mod|sp_sv_info_frames|sp_sv_players|sp_sv_print_broadcast|sp_sv_print_client|sp_sv_print_sp_broadcast|sp_sv_print_sp_client|sp_sv_sound_broadcast|sp_sv_sound_client|sp_cl_info_map|
+        |sp_cl_info_pos|sp_cl_info_skins|sp_cl_debuggraph|tgashot|
+        )\b
+      scope: variable.function
+      push: endstatement
+
+    - match: (?<!~)\b(sp_sc_func_alias)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: '[a-zA-Z0-9]+(\w+)'
+          comment: Fixme; regex not stroung enough. Special character should be applied.
+          set:
+            - match: '(\s+\!)'
+              scope: keyword
+            - include: always
+            - include: endstatement
+        - include: endstatement
+
+    - match: (?<!~)\b(sp_sc_cvar_replace)\b
+      scope: variable.function
+      push:
+        - match: ((?<=\s)|(?<=\-)|(?<=:))\%
+          scope: keyword
+        - match: \b(:|\-)
+          scope: string markup.bold
+        - match: ((?<=\%)|(?<=[0-9]))[a-zA-Z0-9]+
+          scope: constant.numeric
+        - include: endstatement
+
+    - match: (?<!~)\b(sp_cl_console)\b
+      scope: variable.function
+      push:
+        - match: (?<!~)\b(on|off)\b
+          scope: markup.raw
+        - match: '(?!\s).'
+          scope: invalid
+        - include: endstatement
+
+    - match: (?<!~)\b(sp_sc_cvar_save|sp_sc_cvar_find|sp_sc_cvar_list|sp_sc_func_list|sp_sv_client_blue|sp_sv_client_play|sp_sv_client_red|sp_sv_client_swap|sp_sv_say_mute|sp_sv_say_unmute)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: (\*)|(\?)
+          scope: string markup.bold
+        - include: n
+
+    - match: (?<!~)\b(sp_sv_client_spec)\b
+      scope: variable.function
+      push:
+        - match: (\*)|(\?)
+          scope: string markup.bold
+          push:
+            - match: (\:-X)
+              scope: keyword.other
+              pop: true
+            - include: endstatement
+        - match: ([0-9]+)
+          scope: constant.numeric
+          push:
+            - match: (\:-X)
+              scope: keyword.other
+              pop: true
+            - include: endstatement
+        - match: '\s([a-zA-Z]+)'
+          scope: invalid
+        - include: endstatement
+
+    - match: (?<!~)\b(sp_sc_file_find)\b
+      scope: variable.function
+      push:
+        - include: always
+        - match: (\*)|(\?) # FIXME: It stops highlighting after more than one character in front
+          scope: string markup.bold
+        - match: '[a-zA-Z0-9]+(\w+)'
+          push:
+            - match: \b\s(pak|filesystem|file|directory|recursive)\b
+              scope: string markup.bold
+            - include: endstatement
+        - include: endstatement
+
+    - match: (?<!~)\b(sp_sc_timer)\b
+      scope: keyword.other
+      push: endstatement
+
+    - match: (?<!~)\b(sp_sc_on_change)\b
+      scope: keyword
+      push:
+        - include: always
+        - match: '[a-zA-Z0-9]+(\w+)'
+          comment: Fixme; regex not stroung enough. Special character should be applied.
+          set:
+            - include: always
+            - match: '[a-zA-Z0-9]+(\w+)'
+              scope: entity.other.inherited-class
+            - include: endstatement
+        - include: endstatement
+
+    - match: (?<!~)\b(exec|sp_sc_exec_file|sp_sc_func_load_file|sp_sc_func_load_cvar)\b\s
+      scope: keyword.other
+      push:
+      - meta_scope: entity.other.inherited-class
+      - include: always
+      - include: n
+      - match: '[a-zA-Z0-9]+(\w+)'
+        scope: markup.italic
+      - include: endstatement
+
+    - match: (?<!~)\b(sp_sc_func_exec|sp_sc_exec_cvar)\b\s
+      scope: keyword.other
+      push:
+        - include: strings
+        - match: \!
+          scope: constant.language markup.italic
+        - include: macroexpand
+        - match: \~
+          scope: variable.parameter
+        - match: '[0-9]+'
+          scope: constant.numeric
+        - match: '([a-zA-Z0-9]+(\w+))|(\@|\%|\?|\&|\*|\(|\)|\_|\+)+'
+          scope: entity.other.inherited-class
+          set:
+            - include: always
+            - match: '[a-zA-Z0-9]+(\w+)'
+            - include: endstatement
+        - match: ';'
+          scope: punctuation.definition.annotation
+          pop: true
+        - include: n
+
+    - match: (;sp_sc_flow_if)|(;sp_sc_flow_while)
+      comment: Semi-comma is a highlight cheat
+      scope: keyword.control
+      push:
+        - match: '\b(number|text|itext)\b'
+          scope: constant.other
+        - match: '\b(N|n|T|t|TI|ti)\s+\b'
+          scope: invalid.deprecated
+        - match: '\b(cvar|val)\b'
+          scope: string
+        - match: '\s(\>|\<|\>=|\<=|==|!=|=)\s'
+          scope: keyword.operator
+        - include: always
+        - include: n
+
+### Sofree ###
+    - match: |-
+        (?<!~)\b(
+        |sf_sv_ent_use|sf_sv_hook_at|sf_sv_int_add|sf_sv_math_or|sf_sv_ent_anim|sf_sv_ent_find|sf_sv_ent_tint|sf_sv_math_and|sf_sv_math_cos|sf_sv_math_not|sf_sv_math_sin|sf_sv_math_tan|sf_sv_print_cinprintf|sf_sv_ent_spawn|sf_sv_ent_vects|sf_sv_math_acos|sf_sv_math_asin|sf_sv_math_atan|
+        |sf_sv_check_reso|sf_sv_draw_clear|sf_sv_ent_create|sf_sv_ent_relink|sf_sv_ent_model|sf_sv_sound_remove|sf_sv_ent_remove|sf_sv_ghoul_list|sf_sv_image_list|sf_sv_player_ent|sf_sv_player_pos|sf_sv_script_run|sf_sv_sound_list|sf_sv_vector_set|sf_sv_draw_string|sf_sv_effect_list|
+        |sf_sv_ghoul_scale|sf_sv_player_anim|sf_sv_player_move|sf_sv_script_load|sf_sv_sofree_help|sf_sv_vector_copy|sf_sv_vector_grow|sf_sv_draw_string2|sf_sv_effect_start|sf_sv_ent_callback|sf_sv_mem_read_int|sf_sv_ent_paint|sf_sv_effect_endpos|sf_sv_ent_field_get|sf_sv_ent_field_set|
+        |sf_sv_mem_read_char|sf_sv_mem_write_int|sf_sv_player_effect|sf_sv_print_bprintf|sf_sv_print_cprintf|sf_sv_mem_write_string|sf_sv_jmp_at|sf_sv_draw_altstring|sf_sv_ghoul_register|sf_sv_image_register|sf_sv_mem_read_float|sf_sv_mem_read_short|sf_sv_mem_write_char|sf_sv_player_gravity|
+        |sf_sv_sound_override|sf_sv_sound_play_ent|sf_int_add|sf_sv_sound_register|sf_sv_effect_register|sf_sv_ghoul_translate|sf_sv_mem_read_string|sf_sv_mem_write_float|sf_sv_mem_write_short|sf_sv_configstring_set|sf_sv_spackage_register| sf_sv_player_paint|sf_sv_player_collision|
+        |sf_sv_player_weap_lock|sf_sv_player_allow_walk|sf_sv_player_weap_paint|sf_sv_print_centerprint|sf_sv_sound_play_origin|sf_sv_spackage_print_id|sf_sv_player_allow_altattack|sf_sv_player_weap_switch|sf_sv_print_welcomeprint|sf_sv_spackage_print_ref|sf_sv_player_allow_attack|
+        |sf_sv_player_weap_current|sf_sv_spackage_print_obit|sf_sv_spackage_print_string|sf_sv_script_unload|sf_sv_trigger_set_size|sf_sv_player_paint|sp_sv_ent_create|sp_sv_trigger_set_size|sf_sv_info_client|sf_sv_save_reso|
+        )\b
+      scope: variable.function
+      push: endstatement
+
+  comment:
+    - match: //
+      scope: comment
+      push:
+        - meta_scope: comment
+        - match: (;sp_sc_flow_if)|(;sp_sc_flow_while)
+          push:
+            - meta_scope: comment
+            - match: (?=\;)
+              comment: scope doesn't work
+              pop: true
+            - include: n
+        - include: n
+  always:
+    - include: macroexpand
+    - include: localvar
+    - include: numbers
+    - include: strings
+  macroexpand:
+    - match: (\$)|(\#)
+      scope: constant.character.escape
+  localvar:
+    - match: (\~)(?=\s)|(\~)
+      scope: variable.parameter
+  numbers:
+    - match: (\s\-)|(\s\+)| #(\s\!) #|(\=)|(\<)|(\>)
+      scope: keyword.punctuation.definition.keyword
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric
+  strings:
+    - match: '"'
+      scope: variable.parameter
+      push:
+        - meta_include_prototype: false
+        - meta_scope: variable.parameter
+        - match: '""'
+          scope: variable.parameter
+        - match: '"'
+          scope: variable.parameter
+          pop: true
+  endstatement:
+    - include: always
+    - match: ';'
+      scope: keyword.control
+      pop: true
+    - include: n
+  n: # Newline
+    - match: $\n?
+      pop: true

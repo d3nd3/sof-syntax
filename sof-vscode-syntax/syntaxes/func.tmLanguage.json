@@ -1,0 +1,51 @@
+{
+  "scopeName": "source.func",
+  "name": "SoF - SoFPlus Function",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#macro" },
+    { "include": "#keywords" },
+    { "include": "#commands" }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [{ "name": "comment.line.double-slash.func", "match": "//.*$" }]
+    },
+    "strings": {
+      "patterns": [
+        { "name": "string.quoted.double.func", "begin": "\"", "end": "\"" }
+      ]
+    },
+    "macro": {
+      "patterns": [
+        { "name": "constant.character.escape.func", "match": "[#$]" },
+        { "name": "variable.parameter.func", "match": "~" }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "name": "constant.numeric.func", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        { "name": "keyword.control.func", "match": "(?<!~)\\b(?:sp_sc_flow_if|sp_sc_flow_while|else)\\b" },
+        { "name": "keyword.other.func", "match": "\\bfunction\\b" }
+      ]
+    },
+    "commands": {
+      "patterns": [
+        { "name": "keyword.other.func", "match": "(?<!~)\\b(?:wait|stop|stopsound|return|menuoff|popmenu|refresh|killmenu)\\b" },
+        { "name": "string.unquoted.command.func", "match": "(?x)(?<!~)\\b(?:path|help|info|kill|cpuid|elbow|ninja|pause|score|skins|reload|status|cmdlist|entlist|heretic|ip_list|loading|newsave|phantom|players|vid_front|vid_restart|rawshot|viewpos|z_stats|bigelbow|bindlist|changing|cl_touch|conchars|cvarlist|hackteam|itemdrop|itemnext|itemprev|precache|filter_write|clear|sizeup|sizedown|minimise|usermisc|weapnext|weapprev|itemuse|ff_usejoy|freshgame|heartbeat|imagelist|playlevel|quickload|quicksave|reconnect|reloadall|savesleft|soundinfo|soundlist|unbindall|useritems|savekeys|teamview|userammo|userinfo|getgamestats|putaway|vid_modes|centerview|disconnect|gl_strings|killserver|listignore|playerlist|saveconfig|screenshot|serverinfo|serverstop|togglechat|weapondrop|weaponlose|destroyents|ff_usemouse|filter_list|gsc_connect|listpickups|pingservers|reset_predn|snd_restart|updateinven|userweapons|hackkillbots|list_dmflags|toggleconsole|defaultweapons|gsc_disconnect|maxfpsfromrate|updateinvfinal|weaponbestsafe|gsc_getchannels|killallmonsters|givemoretutorial|turnonmissionmsg|weaponbestunsafe|turnoffmissionmsg|givesnipertutorial|joy_advancedupdateexit)\\b" },
+        { "name": "keyword.other.func", "match": "(?<!~)\\b(?:error|quit|exit|wipe)\\b" },
+        { "name": "keyword.other.func", "match": "(?<!~)\\b(?:rcon)\\b" },
+        { "name": "variable.function.func", "match": "(?<!~)\\b(?:bind|unbind|set|sset|setenv)\\b" },
+        { "name": "keyword.operator.semicolon.func", "match": ";" }
+      ]
+    }
+  }
+}
+
+

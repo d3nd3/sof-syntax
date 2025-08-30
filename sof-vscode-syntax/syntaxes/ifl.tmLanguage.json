@@ -1,0 +1,11 @@
+{
+  "scopeName": "source.ifl",
+  "name": "SoF - Image Files",
+  "patterns": [
+    { "name": "keyword.ifl", "match": ".*" },
+    { "name": "constant.numeric.ifl", "match": "\\b\\d+\\b" },
+    { "name": "entity.name.filename.ifl", "match": "\\.[tT][gG][aA]$" }
+  ]
+}
+
+

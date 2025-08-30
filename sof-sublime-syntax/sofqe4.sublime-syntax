@@ -1,0 +1,95 @@
+%YAML 1.2
+---
+name: SoF - SDK Radiant project file
+file_extensions: [qe4]
+scope: source.wrs
+contexts:
+  prototype:
+    - include: comment
+  main:
+    - match: '{'
+      push:
+        - include: pathcompile
+        - include: comment
+        #- include: strings
+        - include: numbers
+        - include: always
+    - match: '}'
+      pop: true
+
+  pathcompile:
+    - match: \b(basepath|rshcmd|remotebasepath|entitypath|texturepath|autosave|mapspath)\b
+      scope: variable.function
+      push:
+        - match: '"\s"'
+          scope: keyword
+          set:
+          - meta_scope: variable.language
+          - match: '"'
+            scope: keyword
+            pop: true
+          - match: $\n?
+            pop: true
+    - match: \b(bsp_Relight_Qrad|bsp_FullVis|bsp_NoVis|bsp_Entities|bsp_VisRad|bsp_FastVis)\b
+      scope: variable.function
+    - match: \b(sofarghrad|sofvis|sofbsp|\.exe)\b
+      scope: string
+    - match: '.:'
+      scope: string
+      push:
+        - meta_scope: string
+        - match: \s
+          pop: true
+    - match: '"'
+      scope: variable.language
+    - match: \-
+      scope: keyword
+      push:
+        - match: \w+
+          scope: entity.name
+          pop: true
+    - match: \(
+      scope: variable.parameter
+      push:
+      - match: '(.*?)(?=\()'
+      - meta_scope: variable.parameter
+      - match: \)
+        scope: variable.parameter
+        pop: true
+
+  strings:
+    - match: '"'
+      scope: variable.language
+      push:
+        - include: pathcompile
+        #- include: always
+        #- include: numbers
+        - meta_scope: variable.language
+        - match: '"'
+          pop: true
+  comment:
+    - match: //
+      scope: comment
+      push:
+        - meta_scope: comment
+        - match: $\n?
+          pop: true
+  always:
+    - match: (\&&)|(\!)|(\$)
+      scope: keyword
+    - match: (\\)
+      scope: string
+  numbers:
+    - match: |-
+        (?x)(?:
+          # floats
+          (?:(?:\b\d(?:[\d']*\d)?\.\d(?:[\d']*\d)?|\B\.\d(?:[\d']*\d)?)(?:[Ee][+-]?\d(?:[\d']*\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b|
+          (?:\b\d(?:[\d']*\d)?\.)(?:\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))\b|(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          \b\d(?:[\d']*\d)?(?:[Ee][+-]?\d(?:[\d']*\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\w*))?\b)|
+          # ints
+          \b(?:(?:[1-9](?:[\d']*\d)?|# dec
+          0(?:[0-7']*[0-7])?|# oct
+          0[Xx][\da-fA-F](?:[\da-fA-F']*[\da-fA-F])?|# hex
+          0[Bb][01](?:[01']*[01])?)# bin
+          (?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\w*))?)\b)# int suffixes
+      scope: constant.numeric

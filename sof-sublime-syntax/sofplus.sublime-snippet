@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[sp_sc_cvar_copy]]></content>
+    <!-- Optional: Tab trigger to activate the snippet -->
+    <tabTrigger>ccopy</tabTrigger>
+    <!-- Optional: Scope the tab trigger will be active in -->
+    <scope>source.func</scope>
+    <!-- Optional: Description to show in the menu -->
+    <description>Sofplus snippets</description>
+</snippet>

@@ -1,0 +1,52 @@
+{
+  "name": "sof-syntax",
+  "displayName": "Soldier of Fortune Syntax",
+  "description": "VS Code syntax highlighting for Soldier of Fortune scripting/config formats (SoF)",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {"id": "sof-cfg", "aliases": ["SoF Config"], "extensions": [".cfg"], "configuration": "./languages/cfg.language.json"},
+      {"id": "sof-func", "aliases": ["SoFPlus Function"], "extensions": [".func"], "configuration": "./languages/func.language.json"},
+      {"id": "sof-ds", "aliases": ["SoF Designer Script"], "extensions": [".ds"], "configuration": "./languages/ds.language.json"},
+      {"id": "sof-def", "aliases": ["SoF Definition"], "extensions": [".def"], "configuration": "./languages/def.language.json"},
+      {"id": "sof-rmf", "aliases": ["SoF Raven Menu Format"], "extensions": [".rmf"], "configuration": "./languages/rmf.language.json"},
+      {"id": "sof-sp", "aliases": ["SoF String Package"], "extensions": [".sp"], "configuration": "./languages/sp.language.json"},
+      {"id": "sof-wrs", "aliases": ["SoF Waypoint Routes"], "extensions": [".wrs"], "configuration": "./languages/wrs.language.json"},
+      {"id": "sof-gin", "aliases": ["SoF GIN"], "extensions": [".gin"], "configuration": "./languages/gin.language.json"},
+      {"id": "sof-gpm", "aliases": ["SoF Ghoul Player Model"], "extensions": [".gpm"], "configuration": "./languages/gpm.language.json"},
+      {"id": "sof-gbm", "aliases": ["SoF Ghoul Bolton Model"], "extensions": [".gbm"], "configuration": "./languages/gbm.language.json"},
+      {"id": "sof-gsq", "aliases": ["SoF Ghoul Sequences"], "extensions": [".gsq"], "configuration": "./languages/gsq.language.json"},
+      {"id": "sof-ifl", "aliases": ["SoF Image Files"], "extensions": [".ifl"], "configuration": "./languages/ifl.language.json"},
+      {"id": "sof-lst", "aliases": ["SoF Map List"], "extensions": [".lst"], "configuration": "./languages/lst.language.json"},
+      {"id": "sof-qdt", "aliases": ["SoF QData"], "extensions": [".qdt"], "configuration": "./languages/qdt.language.json"},
+      {"id": "sof-qe4", "aliases": ["SoF SDK Radiant Project"], "extensions": [".qe4"], "configuration": "./languages/qe4.language.json"},
+      {"id": "sof-bpf", "aliases": ["SoF Hidebot Personality File"], "extensions": [".bpf"], "configuration": "./languages/bpf.language.json"}
+    ],
+    "grammars": [
+      {"language": "sof-cfg", "scopeName": "source.cfg", "path": "./syntaxes/cfg.tmLanguage.json"},
+      {"language": "sof-func", "scopeName": "source.func", "path": "./syntaxes/func.tmLanguage.json"},
+      {"language": "sof-ds", "scopeName": "source.ds", "path": "./syntaxes/ds.tmLanguage.json"},
+      {"language": "sof-def", "scopeName": "source.def", "path": "./syntaxes/def.tmLanguage.json"},
+      {"language": "sof-rmf", "scopeName": "source.rmf", "path": "./syntaxes/rmf.tmLanguage.json"},
+      {"language": "sof-sp", "scopeName": "source.sp", "path": "./syntaxes/sp.tmLanguage.json"},
+      {"language": "sof-wrs", "scopeName": "source.wrs", "path": "./syntaxes/wrs.tmLanguage.json"},
+      {"language": "sof-gin", "scopeName": "source.gin", "path": "./syntaxes/gin.tmLanguage.json"},
+      {"language": "sof-gpm", "scopeName": "source.gpm", "path": "./syntaxes/gpm.tmLanguage.json"},
+      {"language": "sof-gbm", "scopeName": "source.gbm", "path": "./syntaxes/gbm.tmLanguage.json"},
+      {"language": "sof-gsq", "scopeName": "source.gsq", "path": "./syntaxes/gsq.tmLanguage.json"},
+      {"language": "sof-ifl", "scopeName": "source.ifl", "path": "./syntaxes/ifl.tmLanguage.json"},
+      {"language": "sof-lst", "scopeName": "source.lst", "path": "./syntaxes/lst.tmLanguage.json"},
+      {"language": "sof-qdt", "scopeName": "source.qdt", "path": "./syntaxes/qdt.tmLanguage.json"},
+      {"language": "sof-qe4", "scopeName": "source.wrs", "path": "./syntaxes/qe4.tmLanguage.json"},
+      {"language": "sof-bpf", "scopeName": "source.bpf", "path": "./syntaxes/bpf.tmLanguage.json"}
+    ]
+  }
+}
+

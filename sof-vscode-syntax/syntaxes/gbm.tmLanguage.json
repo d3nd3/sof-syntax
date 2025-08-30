@@ -1,0 +1,13 @@
+{
+  "scopeName": "source.gbm",
+  "name": "SoF - Ghoul Bolton Model",
+  "patterns": [
+    { "include": "#numbers" },
+    { "name": "string.unquoted.gbm", "match": ".+" }
+  ],
+  "repository": {
+    "numbers": { "patterns": [ { "name": "constant.numeric.gbm", "match": "\\b\\d+\\b" } ] }
+  }
+}
+
+
