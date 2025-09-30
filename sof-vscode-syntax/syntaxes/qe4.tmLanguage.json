@@ -1,27 +1,102 @@
 {
-  "scopeName": "source.wrs",
+  "scopeName": "source.qe4",
   "name": "SoF - SDK Radiant project file",
   "patterns": [
     { "include": "#comment" },
     { "include": "#numbers" },
-    { "include": "#strings" },
     { "include": "#keywords" },
-    { "include": "#flags" }
+    { "include": "#strings" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.qe4", "match": "//.*$" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.qe4", "match": "\\b\\d+(?:\\.\\d+)?\\b" } ] },
-    "strings": { "patterns": [ { "name": "variable.language.qe4", "begin": "\"", "end": "\"" } ] },
-    "keywords": {
+    "comment": {
       "patterns": [
-        { "name": "variable.function.qe4", "match": "\\b(?:basepath|rshcmd|remotebasepath|entitypath|texturepath|autosave|mapspath|bsp_Relight_Qrad|bsp_FullVis|bsp_NoVis|bsp_Entities|bsp_VisRad|bsp_FastVis)\\b" },
-        { "name": "string.exe.qe4", "match": "\\b(?:sofarghrad|sofvis|sofbsp|\\.exe)\\b" },
-        { "name": "string.drive.qe4", "match": ".:" },
-        { "name": "keyword.operator.flag.qe4", "match": "-\\w+" }
+        {
+          "name": "comment.line.double-slash.qe4",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.qe4",
+              "match": ".*"
+            }
+          ]
+        }
       ]
     },
-    "flags": { "patterns": [ { "name": "variable.parameter.qe4", "match": "\\(.*?\\)" } ] }
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.qe4",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "variable.function.qe4",
+          "match": "\\b(basepath|rshcmd|remotebasepath|entitypath|texturepath|autosave|mapspath)\\b"
+        },
+        {
+          "name": "keyword.qe4",
+          "match": "\"\\s\""
+        },
+        {
+          "name": "variable.function.qe4",
+          "match": "(?x)\\b(bsp_Relight_Qrad|bsp_FullVis|bsp_NoVis|bsp_Entities|bsp_VisRad|bsp_FastVis)\\b"
+        },
+        {
+          "name": "string.qe4",
+          "match": "\\b(sofarghrad|sofvis|sofbsp|\\.exe)\\b"
+        },
+        {
+          "name": "string.qe4",
+          "match": ".:"
+        },
+        {
+          "name": "keyword.qe4",
+          "match": "\\-"
+        },
+        {
+          "name": "entity.name.qe4",
+          "match": "\\w+"
+        },
+        {
+          "name": "variable.parameter.qe4",
+          "match": "\\("
+        },
+        {
+          "name": "variable.parameter.qe4",
+          "match": "(.*?)(?=\\()"
+        },
+        {
+          "name": "variable.parameter.qe4",
+          "match": "\\)"
+        },
+        {
+          "name": "keyword.qe4",
+          "match": "(\\&&)|(\\!)|(\\$)"
+        },
+        {
+          "name": "string.qe4",
+          "match": "(\\\\)"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.qe4",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.qe4",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    }
   }
 }
-
-

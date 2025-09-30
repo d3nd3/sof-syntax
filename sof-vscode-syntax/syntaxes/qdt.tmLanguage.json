@@ -2,30 +2,126 @@
   "scopeName": "source.qdt",
   "name": "SoF - SoF QData",
   "patterns": [
-    { "include": "#comments" },
+    { "include": "#comment" },
     { "include": "#numbers" },
-    { "include": "#strings" },
-    { "include": "#directives" }
+    { "include": "#keywords" },
+    { "include": "#strings" }
   ],
   "repository": {
-    "comments": {
+    "comment": {
       "patterns": [
-        { "name": "comment.line.double-slash.qdt", "match": "//.*$" },
-        { "name": "comment.line.number-sign.qdt", "match": "#.*$" },
-        { "name": "comment.line.semicolon.qdt", "match": ";.*$" },
-        { "name": "comment.block.qdt", "begin": "/\\*", "end": "\\*/" }
+        {
+          "name": "comment.line.double-slash.qdt",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.qdt",
+              "match": ".*"
+            }
+          ]
+        },
+        {
+          "name": "comment.line.number-sign.qdt",
+          "begin": "#",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.qdt",
+              "match": ".*"
+            }
+          ]
+        },
+        {
+          "name": "comment.line.semicolon.qdt",
+          "begin": ";",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.qdt",
+              "match": ".*"
+            }
+          ]
+        },
+        {
+          "name": "comment.block.qdt",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "patterns": [
+            {
+              "name": "comment.qdt",
+              "match": ".*"
+            }
+          ]
+        }
       ]
     },
-    "strings": { "patterns": [ { "name": "string.quoted.double.qdt", "begin": "\"", "end": "\"" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.qdt", "match": "\\b\\d+(?:\\.\\d+)?\\b" } ] },
-    "directives": {
+    "numbers": {
       "patterns": [
-        { "name": "keyword.directive.qdt", "match": "^\\$\\s*(?:pak|mipdir|picdir|load|texturemix|tmixdir|file|dir|maps|include)\\b" },
-        { "name": "entity.name.function.qdt", "match": "\\bmip\\b" },
-        { "name": "support.constant.gl.qdt", "match": "\\bGL_(?:ZERO|ONE|SRC_COLOR|ONE_MINUS_SRC_COLOR|DST_COLOR|ONE_MINUS_DST_COLOR|SRC_ALPHA|ONE_MINUS_SRC_ALPHA|DST_ALPHA|ONE_MINUS_DST_ALPHA|SRC_ALPHA_SATURATE)\\b" }
+        {
+          "name": "constant.character.escape.qdt",
+          "match": "\\b([0-9]\\s+|[0-9]+(.))\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.qdt",
+          "match": "^\\$"
+        },
+        {
+          "name": "entity.name.function.qdt",
+          "match": "\\b(mip\\s+)\\b"
+        },
+        {
+          "name": "variable.parameter.function.qdt",
+          "match": "\\b(\\w|-)+\\s+\\b"
+        },
+        {
+          "name": "constant.character.escape.qdt",
+          "match": "\\b(?:[\\d']*\\d)\\s+\\b(?:[\\d']*\\d)\\s+\\b(?:[\\d']*\\d)\\s+\\b(?:[\\d']*\\d)\\s+"
+        },
+        {
+          "name": "keyword.qdt",
+          "match": "(?x)\\b(pushpull|water|slime|lava|window|mist|origin|playerclip|monsterclip|hint|skip|slick|sky|warping|trans33|trans66|flowing|nodraw|alpha|undulate|skyreflect)\\b"
+        },
+        {
+          "name": "variable.function.qdt",
+          "match": "\\b(light|animspeed|anim|alt|damage|material|scale|mip|detail|spherical|m_nomip|m_detail|m_spherical|m_parental)\\b"
+        },
+        {
+          "name": "markup.italic.qdt",
+          "match": "(?x)\\b(GL_ZERO|GL_ONE|GL_SRC_COLOR|GL_ONE_MINUS_SRC_COLOR|GL_DST_COLOR|GL_ONE_MINUS_DST_COLOR|GL_SRC_ALPHA|GL_ONE_MINUS_SRC_ALPHA|GL_DST_ALPHA|GL_ONE_MINUS_DST_ALPHA|GL_SRC_ALPHA_SATURATE)\\b"
+        },
+        {
+          "name": "string.quoted.double.qdt",
+          "match": "\\w+\\.m32"
+        },
+        {
+          "name": "entity.name.function.qdt",
+          "match": "\\b(pak|mipdir|picdir|load|texturemix|tmixdir|file|dir|maps|include)\\b"
+        },
+        {
+          "name": "variable.parameter.function.qdt",
+          "match": ".*"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.qdt",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.qdt",
+              "match": "\"\""
+            }
+          ]
+        }
       ]
     }
   }
 }
-
-

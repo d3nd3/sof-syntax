@@ -1,24 +1,172 @@
 {
   "scopeName": "source.gin",
   "name": "SoF - GIN",
+  "firstLineMatch": "(^File:)",
   "patterns": [
+    { "include": "#comment" },
     { "include": "#numbers" },
-    { "name": "keyword.other.gin", "match": "^File:" },
-    { "name": "keyword.other.gin", "match": "^3DSMax BBox Min:" },
-    { "name": "keyword.other.gin", "match": "^3DSMax BBox Max:" },
-    { "name": "keyword.other.gin", "match": "^Sequence" },
-    { "name": "keyword.other.gin", "match": "^Frame Time" },
-    { "name": "keyword.other.gin", "match": "^NoteKeys:" },
-    { "name": "keyword.other.gin", "match": "^StartFrame" },
-    { "name": "keyword.other.gin", "match": "^Materials" },
-    { "include": "#strings" }
+    { "include": "#keywords" },
+    { "include": "#strings" },
+    { "include": "#materials" }
   ],
   "repository": {
-    "numbers": { "patterns": [ { "name": "constant.numeric.gin", "match": "(?:[=+\-])|(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.gin",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.gin",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "keyword.gin",
+          "match": "(\\=)|(\\+)|(\\-)"
+        },
+        {
+          "name": "constant.numeric.gin",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.gin",
+          "match": "(^File:)"
+        },
+        {
+          "name": "entity.name.gin",
+          "match": ".*$\\n"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^3DSMax BBox Min:)"
+        },
+        {
+          "name": "entity.name.gin",
+          "match": "\\("
+        },
+        {
+          "name": "keyword.gin",
+          "match": "\\,"
+        },
+        {
+          "name": "entity.name.gin",
+          "match": "\\)$\\n"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^3DSMax BBox Max:)"
+        },
+        {
+          "name": "entity.name.gin",
+          "match": "\\)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^Sequence)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^Frame Time)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^NoteKeys:)"
+        },
+        {
+          "name": "variable.function.gin",
+          "match": "(time)|(token)|(rest)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^StartFrame)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(NumFrames)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^Materials)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^Nulls:)|(^Meshes:)|(^Cameras:)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "(^Lights:)"
+        },
+        {
+          "name": "storage.type.gin",
+          "match": "(?x)\\b(Non-Blob Size|Blob Size|verts|nulls|Mat Blocks|cPos|cTex|cNorm|Mesh|Elem|Corn|aPos|aTex|aNorm|Comp)\\b"
+        }
+      ]
+    },
     "strings": {
-      "patterns": [ { "name": "string.quoted.double.gin", "begin": "\"", "end": "\"" } ]
+      "patterns": [
+        {
+          "name": "string.quoted.double.gin",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.gin",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    },
+    "materials": {
+      "patterns": [
+        {
+          "name": "keyword.gin",
+          "match": "\\s+(Name)"
+        },
+        {
+          "name": "entity.name.gin",
+          "match": "(.*)"
+        },
+        {
+          "name": "variable.function.gin",
+          "match": "(opaque)|(specular)|(tex)|(two sided)|(additive)|(Animates:)"
+        },
+        {
+          "name": "keyword.gin",
+          "match": "no"
+        },
+        {
+          "name": "entity.name.gin",
+          "match": "yes"
+        },
+        {
+          "name": "variable.function.gin",
+          "match": "(Tex Map)"
+        },
+        {
+          "name": "variable.function.gin",
+          "match": "\\["
+        },
+        {
+          "name": "variable.function.gin",
+          "match": "\\]"
+        },
+        {
+          "name": "message.error.gin",
+          "match": "(Warning:)"
+        }
+      ]
     }
   }
 }
-
-

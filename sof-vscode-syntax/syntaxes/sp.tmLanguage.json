@@ -1,6 +1,7 @@
 {
   "scopeName": "source.sp",
   "name": "SoF - String Package",
+  "firstLineMatch": "^VERSION",
   "patterns": [
     { "include": "#comment" },
     { "include": "#numbers" },
@@ -8,14 +9,111 @@
     { "include": "#strings" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.sp", "match": "//.*$" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.sp", "match": "\\b\\d+\\b" } ] },
-    "sections": {
+    "comment": {
       "patterns": [
-        { "name": "keyword.control.sp", "match": "^(?:VERSION|ID|REFERENCE|DESCRIPTION|COUNT|INDEX|FLAGS|TEXT_ENGLISH|TEXT_FRENCH|TEXT_GERMAN|TEXT_BRITISH|NOTES)\\b" }
+        {
+          "name": "comment.line.double-slash.sp",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.sp",
+              "match": ".*"
+            }
+          ]
+        }
       ]
     },
-    "strings": { "patterns": [ { "name": "string.quoted.double.sp", "begin": "\"", "end": "\"" } ] }
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.sp",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    },
+    "sections": {
+      "patterns": [
+        {
+          "name": "keyword.control.sp",
+          "match": "^VERSION\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "^ID\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "^REFERENCE\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "^DESCRIPTION\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "^COUNT\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "^INDEX\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "^FLAGS\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "keyword.control.sp",
+          "match": "\\b(TEXT_ENGLISH|TEXT_FRENCH|TEXT_GERMAN|TEXT_BRITISH)\\b",
+          "captures": {
+            "0": { "name": "keyword.sp" }
+          }
+        },
+        {
+          "name": "string.sp",
+          "match": "^NOTES\\b",
+          "captures": {
+            "0": { "name": "string.sp" }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.sp",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.sp",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    }
   }
 }
 

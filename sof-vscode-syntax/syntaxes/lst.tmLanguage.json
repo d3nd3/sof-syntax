@@ -4,16 +4,71 @@
   "patterns": [
     { "include": "#comment" },
     { "include": "#strings" },
-    { "name": "string.unquoted.path.lst", "match": "^(?:\\w+\\s|\\w+\\s/).*$" },
-    { "name": "storage.type.folder.lst", "match": "^\\w+/" },
-    { "name": "invalid.deprecated.alpha.lst", "match": "(?:alpha[0-9]+|alpha|beta?[0-9]+|beta|[dD][eE][mM][oO])$" },
-    { "name": "entity.name.final.lst", "match": "final.?$" },
-    { "name": "variable.function.suffix.lst", "match": "_x$" }
+    { "include": "#keywords" },
+    { "include": "#numbers" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.lst", "match": "//.*$" } ] },
-    "strings": { "patterns": [ { "name": "string.quoted.double.lst", "begin": "\"", "end": "\"" } ] }
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.lst",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.lst",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.lst",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.lst",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "string.lst",
+          "match": "(^\\w+\\s)|(^\\w+\\s/)"
+        },
+        {
+          "name": "storage.type.lst",
+          "match": "(^\\w+/)"
+        },
+        {
+          "name": "keyword.error.lst",
+          "match": "(alpha[0-9]+)|(alpha)|(beta?[0-9]+)|(beta)|([dD][eE][mM][oO])$\\n?"
+        },
+        {
+          "name": "entity.name.lst",
+          "match": "final.?$\\n"
+        },
+        {
+          "name": "variable.function.lst",
+          "match": "_x$\\n"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.lst",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    }
   }
 }
-
-

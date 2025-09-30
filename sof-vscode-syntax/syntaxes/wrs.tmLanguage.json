@@ -1,20 +1,71 @@
 {
   "scopeName": "source.wrs",
   "name": "SoF - Waypoint Routes",
+  "firstLineMatch": "\\b(^Version)\\b",
   "patterns": [
     { "include": "#comment" },
     { "include": "#numbers" },
-    { "name": "keyword.other.wrs", "match": "\\b(?:begin|end)\\b" },
-    { "name": "entity.name.function.wrs", "match": "\\b(?:dm|team1|team2)\\b" },
-    { "name": "variable.function.bold.wrs", "match": "c[0-9]+" },
-    { "name": "keyword.version.wrs", "match": "^Version" },
+    { "include": "#keywords" },
     { "include": "#strings" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.wrs", "match": "//.*$" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.wrs", "match": "\\b\\d+\\b" } ] },
-    "strings": { "patterns": [ { "name": "string.quoted.double.wrs", "begin": "\"", "end": "\"" } ] }
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.wrs",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.wrs",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.wrs",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.wrs",
+          "match": "\\b(^Version)\\b"
+        },
+        {
+          "name": "keyword.wrs",
+          "match": "\\b(begin|end)\\b"
+        },
+        {
+          "name": "entity.name.function.wrs",
+          "match": "\\b(dm|team1|team2)\\b"
+        },
+        {
+          "name": "variable.function.wrs",
+          "match": "c[0-9]+"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.wrs",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.wrs",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    }
   }
 }
-
-
