@@ -2,10 +2,38 @@
   "scopeName": "source.gsq",
   "name": "SoF - Ghoul Sequences",
   "patterns": [
-    { "name": "keyword.other.directive.gsq", "match": "#.*$" },
-    { "name": "string.other.underscore.gsq", "match": "_" },
-    { "name": "constant.numeric.gsq", "match": "\\d+" }
-  ]
+    { "include": "#keywords" },
+    { "include": "#numbers" },
+    { "include": "#strings" }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.gsq",
+          "match": "\\#"
+        },
+        {
+          "name": "entity.name.gsq",
+          "match": ".+$\\n"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.gsq",
+          "match": "\\d"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.gsq",
+          "match": "\\_"
+        }
+      ]
+    }
+  }
 }
-
-

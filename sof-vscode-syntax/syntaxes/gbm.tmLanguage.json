@@ -2,12 +2,50 @@
   "scopeName": "source.gbm",
   "name": "SoF - Ghoul Bolton Model",
   "patterns": [
+    { "include": "#strings" },
     { "include": "#numbers" },
-    { "name": "string.unquoted.gbm", "match": ".+" }
+    { "include": "#keywords" }
   ],
   "repository": {
-    "numbers": { "patterns": [ { "name": "constant.numeric.gbm", "match": "\\b\\d+\\b" } ] }
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.gbm",
+          "match": "(.+$\\n)|(.+)"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.gbm",
+          "match": "[0-9]+"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "entity.name.gbm",
+          "match": ".+$\\n"
+        },
+        {
+          "name": "variable.function.gbm",
+          "match": ".+$\\n"
+        },
+        {
+          "name": "keyword.gbm",
+          "match": "(^[\\s]*\\n)|(.)"
+        },
+        {
+          "name": "keyword.gbm",
+          "match": "((\\w+\\s)(\\w+\\s))"
+        },
+        {
+          "name": "keyword.gbm",
+          "match": "(\\{\\})"
+        }
+      ]
+    }
   }
 }
-
-

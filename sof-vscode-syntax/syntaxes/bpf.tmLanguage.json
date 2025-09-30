@@ -1,6 +1,7 @@
 {
   "scopeName": "source.bpf",
   "name": "SoF - Hidebot Personality File",
+  "firstLineMatch": "^userinfo",
   "patterns": [
     { "include": "#comment" },
     { "include": "#numbers" },
@@ -10,29 +11,83 @@
     { "include": "#userinfo" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.number-sign.bpf", "match": "#.*$" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.bpf", "match": "\\b\\d+\\b" } ] },
-    "strings": { "patterns": [ { "name": "string.quoted.double.bpf", "begin": "\"", "end": "\"" } ] },
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.bpf",
+          "begin": "#",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.bpf",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.bpf",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.bpf",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.bpf",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    },
     "sections": {
       "patterns": [
-        { "name": "entity.other.inherited-class.bpf", "match": "^\\[\\s*(?:SECT|sect|SECTEND|sectend)\\s*\\]" }
+        {
+          "name": "entity.other.inherited-class.bpf",
+          "match": "^\\[\\s*(?:SECT|sect|SECTEND|sectend)\\s*\\]"
+        }
       ]
     },
     "assignments": {
       "patterns": [
-        { "name": "keyword.declaration.bpf", "match": "\\b(?:accuracy|fov|turning_speed|view_distance|general_intelligence|canchat|chatfreq|SECT|SECTEND)\\b" },
-        { "name": "keyword.operator.assignment.bpf", "match": "=" }
+        {
+          "name": "keyword.declaration.bpf",
+          "match": "\\b(?:accuracy|fov|turning_speed|view_distance|general_intelligence|canchat|chatfreq|SECT|SECTEND)\\b"
+        },
+        {
+          "name": "keyword.operator.assignment.bpf",
+          "match": "="
+        }
       ]
     },
     "userinfo": {
       "patterns": [
-        { "name": "keyword.declaration.userinfo.bpf", "match": "^userinfo\\b" },
-        { "name": "keyword.operator.bpf", "match": "[=\-\*\+<>]" },
-        { "name": "entity.name.bpf", "match": "\\b(?:name|skin)\\b" },
-        { "name": "constant.character.escape.backslash.bpf", "match": "\\\\" }
+        {
+          "name": "keyword.declaration.userinfo.bpf",
+          "match": "^userinfo\\b"
+        },
+        {
+          "name": "keyword.operator.bpf",
+          "match": "[=\\-\\*\\+<>]"
+        },
+        {
+          "name": "entity.name.bpf",
+          "match": "\\b(?:name|skin)\\b"
+        },
+        {
+          "name": "constant.character.escape.backslash.bpf",
+          "match": "\\\\"
+        }
       ]
     }
   }
 }
-
-

@@ -1,31 +1,305 @@
 {
   "scopeName": "source.ds",
   "name": "SoF - Designer Script",
+  "firstLineMatch": "(#include)|(#define)|(output)",
   "patterns": [
-    { "include": "#comment" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#keywords" },
-    { "include": "#commands" }
+    { "include": "#comments" },
+    { "include": "#directives" },
+    { "include": "#declarations" },
+    { "include": "#code" },
+    { "include": "#general" },
+    { "include": "#entity" },
+    { "include": "#function" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.ds", "match": "//.*$" } ] },
-    "strings": {
-      "patterns": [ { "name": "string.quoted.double.ds", "begin": "\"", "end": "\"" } ]
-    },
-    "numbers": { "patterns": [ { "name": "constant.numeric.ds", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
-    "keywords": {
+    "comments": {
       "patterns": [
-        { "name": "keyword.control.ds", "match": "\\b(?:if|endif|else|while|endwhile|on|suspend|resume|exit|label|goto|wait|debug)\\b" }
+        {
+          "name": "comment.block.ds",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "patterns": [
+            {
+              "name": "comment.ds",
+              "match": ".*"
+            }
+          ]
+        },
+        {
+          "name": "comment.line.double-slash.ds",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.ds",
+              "match": ".*"
+            }
+          ]
+        }
       ]
     },
-    "commands": {
+    "directives": {
       "patterns": [
-        { "name": "variable.function.ds", "match": "\\b(?:print|playsong|\\bplay sound\\b|enable|disable|cache|unload|setcvar cvar|run console command)\\b" },
-        { "name": "entity.name.ds", "match": "\\b(?:remove entity|use entity|reset ai for entity|move entity|rotate entity|moverotate entity|animate entity|copy player attributes from entity|set view angles of entity|set cache size to|helicopter entity|tank entity)\\b" }
+        {
+          "name": "keyword.ds",
+          "match": "(#include)|(output)"
+        },
+        {
+          "name": "keyword.ds",
+          "match": "#define"
+        },
+        {
+          "name": "entity.other.inherited-class.ds",
+          "match": "[a-zA-Z0-9]+\\w+"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(parameter|local|global|field)\\b"
+        },
+        {
+          "name": "entity.name.ds",
+          "match": "\\b(int|float|vector|entity)\\b"
+        },
+        {
+          "name": "keyword.operator.ds",
+          "match": "(\\.)|(\\=)|(\\-)|(\\*)|(\\+)|(\\<)|(\\>)|(\\!)|(\\/)"
+        },
+        {
+          "name": "variable.ds",
+          "match": "[a-zA-Z0-9]+\\w+"
+        }
+      ]
+    },
+    "code": {
+      "patterns": [
+        {
+          "name": "keyword.other.ds",
+          "match": "^(on\\s)|^\\s+(on\\s)"
+        },
+        {
+          "name": "keyword.control.ds",
+          "match": "\\b^(if|endif|else|while|endwhile|on|suspend|resume|exit)\\b|^\\s+\\b(if|endif|else|while|endwhile|suspend|resume|exit)\\b"
+        },
+        {
+          "name": "keyword.other.ds",
+          "match": "^(label)|^\\s+(label)"
+        },
+        {
+          "name": "keyword.other.ds",
+          "match": "^(goto)|^\\s+(goto)"
+        },
+        {
+          "name": "keyword.control.ds",
+          "match": "^wait|^\\s+wait"
+        },
+        {
+          "name": "keyword.other.ds",
+          "match": "^debug|^\\s+debug"
+        },
+        {
+          "name": "entity.name.ds",
+          "match": "([a-zA-Z]+(?:_)+\\w+)|([a-zA-Z]+\\w+)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "([a-zA-Z]+(?:_)+\\w+)|([a-zA-Z]+\\w+)"
+        }
+      ]
+    },
+    "general": {
+      "patterns": [
+        {
+          "name": "variable.function.ds",
+          "match": "^print|^\\s+print"
+        },
+        {
+          "name": "variable.parameter.ds",
+          "match": "captioned"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "(centered to entity)|(to entity)|(at level)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(playsong)|^\\s+(playsong)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(play sound)|^\\s+(play sound)"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(for entity|on channel|at volume|at attenuation|after)\\b"
+        },
+        {
+          "name": "variable.parameter.ds",
+          "match": "\\b(enable|disable)\\b"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(cinematics|ambient sounds|plague skins|trigger entity)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(cache)|^\\s+(cache)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "\\b(sound|roff|strings)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(unload)|^\\s+(unload)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(setcvar cvar)|^\\s+(setcvar cvar)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "\\b(to)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(run console command)|^\\s+(run console command)"
+        }
+      ]
+    },
+    "entity": {
+      "patterns": [
+        {
+          "name": "variable.function.ds",
+          "match": "^\\b(remove entity|use entity|reset ai for entity)\\b|^\\s+\\b(remove entity|use entity|reset ai for entity)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^\\b(move entity|rotate entity)\\b|^\\s+\\b(move entity|rotate entity)\\b"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(to|by|signaling)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "\\b(at\\s)\\b"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\sspeed|\\sseconds"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "\\b(over\\s)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^\\b(moverotate entity)\\b|^\\s+\\b(moverotate entity)\\b"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(from file|at|speed|signaling)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(animate entity)|^\\s+(animate entity)"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(showing emotion|performing action|targeting entity|repeating for|holding for|by moving|by turning|from source entity)\\b"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(nulltarget|times)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(copy player attributes from entity)|^\\s+(copy player attributes from entity)"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(to entity)\\b"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(set view angles of entity)|^\\s+(set view angles of entity)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^(set cache size to)|^\\s+(set cache size to)"
+        },
+        {
+          "name": "variable.function.ds",
+          "match": "^\\b(helicopter entity|tank entity)\\b|^\\s+\\b(helicopter entity|tank entity)\\b"
+        }
+      ]
+    },
+    "function": {
+      "patterns": [
+        {
+          "name": "variable.ds",
+          "match": "([a-zA-Z]+(?:_)+\\w+)|([a-zA-Z]+\\w+)"
+        },
+        {
+          "name": "keyword.operator.ds",
+          "match": "(\\.)|(\\=)|(\\-)|(\\*)|(\\+)|(\\<)|(\\>)|(\\!)|(\\/)|(,)"
+        },
+        {
+          "name": "storage.type.ds",
+          "match": "\\b(spawn entity with fields|random from|to|find entity player|find entity with targetname|find entity with scripttarget|sin|cos|get entity other|get entity activator|get entity player|entity)\\b"
+        },
+        {
+          "name": "string.ds",
+          "match": "([a-zA-Z]+(?:_)+\\w+)|([a-zA-Z]+\\w+)"
+        }
+      ]
+    },
+    "defined": {
+      "patterns": [
+        {
+          "name": "string.ds",
+          "match": "(?x)\\b(CHAN_AUTO|CHAN_WEAPON|CHAN_VOICE|CHAN_ITEM|CHAN_BODY|CHAN_ENT1|CHAN_ENT2|CHAN_NO_PHS_ADD|CHAN_RELIABLE|PRINT_LOW|PRINT_MEDIUM|PRINT_HIGH|PRINT_CHAT|MOVETYPE_NONE|MOVETYPE_NOCLIP|MOVETYPE_PUSH|MOVETYPE_STOP|MOVETYPE_WALK|MOVETYPE_STEP|MOVETYPE_FLY|MOVETYPE_TOSS|MOVETYPE_FLYMISSILE|MOVETYPE_BOUNCE|MOVETYPE_DAN|EMOTION_NORMAL|EMOTION_FEAR|EMOTION_ANGRY|EMOTION_PAIN|EMOTION_DEAD|EMOTION_TALK|EMOTION_TALKANGRY|EMOTION_TALKAFRAID|UNKNOWN|RUN|JUMP|DEATH|DEATHTHROWN|DUCK_DN|DUCK_MID|DUCK_UP|DUCK_SHOOT|IDLE|IDLESTRETCH|IDLELOOK|SHOOT|WALK|AFRAIDRUN|GUN_IDLE|SOLID_NOT|SOLID_SOLID|SOLID_BSP|DAMAGE_NO|DAMAGE_YES|DAMAGE_AIM|DAMAGE_NO_RADIUS|HELI_TAKEOFF|HELI_LAND|HELI_REPAIR|HELI_REARM|HELI_GOTO_COORDS|HELI_GOTOREL_ENTITY|HELI_GOTOREL_ENT_X|HELI_GOTOREL_ENT_Y|HELI_GOTOREL_ENT_Z|HELI_MOVEREL|HELI_PAUSE|HELI_FACE_RELENT|HELI_FACE_ABSCOORDS|HELI_FACE_ABSDIR|HELI_FACE_RELCOORDS|HELI_PILOT_FACERELENT|HELI_PILOT_FACERELCOORDS|HELI_PILOT_FACEABSCOORDS|HELI_GUNNER_FACERELENT|HELI_GUNNER_FACERELCOORDS|HELI_GUNNER_FACEABSCOORDS|HELI_STRAFE_RT|HELI_STRAFE_LT|HELI_ROCKETS_ENABLE|HELI_ROCKETS_DISABLE|HELI_CHAINGUN_ENABLE|HELI_CHAINGUN_DISABLE|HELI_FIREAT_RELENT|HELI_FIREAT_ABSCOORDS|HELI_FIREAT_RELCOORDS|HELI_AUTOFIRE_ON|HELI_AUTOFIRE_OFF|HELI_HOVER_PASSIVE|HELI_HOVER_AGGRESSIVE|HELI_SET_WORLDMINS|HELI_SET_WORLDMAXS|HELI_SET_MAXHEALTH|HELI_SET_HEALTH|HELI_SET_DEATHDEST|HELI_SET_TRACEDIMS|HELI_AI|HELI_WAYPOINT|HELI_VOLUME|HELI_VOLUMEMINS|HELI_VOLUMEMAXS|HELI_DEBUG|HELI_CHANGE_SKIN|HELI_CHANGE_BODY|HELI_OUT_OF_CONTROL|TANK_GOTOCOORDS|TANK_FIRECANNONATCOORDS|TANK_MACHGUNAUTO|TANK_DIE|TANK_AIMTURRET|HEAD|NECK|LSHOULDER|RSHOULDER|CHEST|GUT|GROIN|GUNHAND|NUG_O_POPPIN)\\b"
+        },
+        {
+          "name": "variable.parameter.ds",
+          "match": "\\b(kill)\\b"
+        },
+        {
+          "name": "constant.language.ds",
+          "match": "\\b(SCRIPT_RELEASE)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.ds",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.ds",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "keyword.punctuation.definition.keyword.ds",
+          "match": "(\\-)"
+        },
+        {
+          "name": "constant.numeric.ds",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
       ]
     }
   }
 }
-
-

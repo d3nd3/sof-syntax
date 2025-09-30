@@ -1,37 +1,123 @@
 {
   "scopeName": "source.gpm",
   "name": "SoF - Ghoul Player Model",
+  "firstLineMatch": "\\b(enemy/meso|enemy/female)\\b",
   "patterns": [
     { "include": "#comment" },
-    { "include": "#strings" },
     { "include": "#numbers" },
     { "include": "#keywords" },
-    { "include": "#paths" },
-    { "include": "#misc" }
+    { "include": "#strings" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.gpm", "match": "//.*$" } ] },
-    "strings": { "patterns": [ { "name": "string.quoted.double.gpm", "begin": "\"", "end": "\"" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.gpm", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
-    "keywords": {
+    "comment": {
       "patterns": [
-        { "name": "constant.language.gpm", "match": "\\bNoteam\\b" },
-        { "name": "keyword.gpm", "match": "\\b(?:enemy/meso|enemy/female)\\b" },
-        { "name": "keyword.gpm", "match": "\\b(?:meso_menu|fem_menu|meso_player|fem_play)\\b" },
-        { "name": "keyword.gpm", "match": "\\b(?:playerarbul|playerboss|playerbulbul|playerbulbulcoat|playerbulbulti|playerbultibul|playercalfcuff|playercoat|playermask|playersuit|playerbulti|playertiti)\\b" },
-        { "name": "entity.name.gpm", "match": "\\benemy/dth/[a-z]+\\b" }
+        {
+          "name": "comment.line.double-slash.gpm",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.gpm",
+              "match": ".*"
+            }
+          ]
+        }
       ]
     },
-    "paths": {
-      "patterns": [ { "name": "string.other.path.gpm", "match": "[A-Za-z0-9_./\\\\\\-]+\\.gbm\b" } ]
-    },
-    "misc": {
+    "numbers": {
       "patterns": [
-        { "name": "storage.type.gpm", "match": "_+\\w+" },
-        { "name": "variable.parameter.gpm", "match": "[{}]" }
+        {
+          "name": "constant.numeric.gpm",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.gpm",
+          "match": "\\b(enemy/meso|enemy/female)\\b"
+        },
+        {
+          "name": "keyword.gpm",
+          "match": "(meso_menu)"
+        },
+        {
+          "name": "entity.name.function.gpm",
+          "match": "[1-9]"
+        },
+        {
+          "name": "keyword.gpm",
+          "match": "(fem_menu)"
+        },
+        {
+          "name": "keyword.gpm",
+          "match": "\\b(meso_player|fem_play)\\b"
+        },
+        {
+          "name": "keyword.gpm",
+          "match": "(?x)\\b(playerarbul|playerboss|playerbulbul|playerbulbulcoat|playerbulbulti|playerbultibul|playercalfcuff|playercoat|playermask|playersuit|playerbulti|playertiti)\\b"
+        },
+        {
+          "name": "keyword.gpm",
+          "match": "\\b(enemy/dth/)\\b"
+        },
+        {
+          "name": "entity.name.gpm",
+          "match": "[a-z]+"
+        },
+        {
+          "name": "string.gpm",
+          "match": "\\w+"
+        },
+        {
+          "name": "variable.gpm",
+          "match": "\\{"
+        },
+        {
+          "name": "variable.parameter.gpm",
+          "match": "\\b(a|b|c|f|h|hd|md|gz)\\b"
+        },
+        {
+          "name": "storage.type.gpm",
+          "match": "(\\s+\\w+_+\\w+)"
+        },
+        {
+          "name": "string.gpm",
+          "match": "(.*\\.gbm)"
+        },
+        {
+          "name": "storage.type.gpm",
+          "match": "\\w+"
+        },
+        {
+          "name": "storage.type.gpm",
+          "match": "(_+\\w+)"
+        },
+        {
+          "name": "variable.gpm",
+          "match": "\\}"
+        },
+        {
+          "name": "constant.language.gpm",
+          "match": "Noteam"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.gpm",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.gpm",
+              "match": "\"\""
+            }
+          ]
+        }
       ]
     }
   }
 }
-
-

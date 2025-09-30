@@ -2,10 +2,25 @@
   "scopeName": "source.ifl",
   "name": "SoF - Image Files",
   "patterns": [
-    { "name": "keyword.ifl", "match": ".*" },
-    { "name": "constant.numeric.ifl", "match": "\\b\\d+\\b" },
-    { "name": "entity.name.filename.ifl", "match": "\\.[tT][gG][aA]$" }
-  ]
+    { "include": "#numbers" },
+    { "include": "#keywords" }
+  ],
+  "repository": {
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.ifl",
+          "match": "\\d"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "entity.name.ifl",
+          "match": "(\\.[tT][gG][aA])$\\n?"
+        }
+      ]
+    }
+  }
 }
-
-

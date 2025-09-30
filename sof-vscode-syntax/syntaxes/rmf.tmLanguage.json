@@ -1,31 +1,400 @@
 {
   "scopeName": "source.rmf",
   "name": "SoF - Raven Menu Format",
+  "firstLineMatch": "<stm>",
   "patterns": [
-    { "include": "#comment" },
+    { "include": "#comments" },
     { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#tags" },
-    { "include": "#colors" }
+    { "include": "#control" },
+    { "include": "#layout" },
+    { "include": "#area" },
+    { "include": "#numbers" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.line.double-slash.rmf", "match": "//.*$" } ] },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.rmf",
+          "begin": "//",
+          "end": "$",
+          "patterns": [
+            {
+              "name": "comment.rmf",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
     "strings": {
       "patterns": [
-        { "name": "string.quoted.double.rmf", "begin": "\"", "end": "\"" },
-        { "name": "markup.heading.package.rmf", "begin": "\\^", "end": "\\^" }
+        {
+          "name": "string.quoted.double.rmf",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.rmf",
+              "match": "\"\""
+            }
+          ]
+        },
+        {
+          "name": "markup.heading.rmf",
+          "begin": "\\^",
+          "end": "\\^",
+          "patterns": [
+            {
+              "name": "string.rmf",
+              "match": ".*"
+            }
+          ]
+        }
       ]
     },
-    "numbers": { "patterns": [ { "name": "constant.numeric.rmf", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] },
-    "tags": {
+    "control": {
       "patterns": [
-        { "name": "keyword.control.rmf", "match": "<\\s*(?:stm|frame|key|ikey|ckey|alias|set|timeout|cinclude|cninclude|einclude|exinclude|comment|includecvar|cbuf|include|config|exitcfg|tint|font|br|hbr|HBR|center|normal|left|right|cursor|defaults|translate|emote|semote|demote|autoscroll|tab|dmnames|strings|backdrop|blank|hr|vbar|users|chat|rooms|text|ctext|image|list|slider|ticker|input|popup|setkey|selection|ghoul|bghoul|gpm|filebox|filereq|loadbox|serverbox|serverdetail|players|listfile)\\b" }
+        {
+          "name": "keyword.control.rmf",
+          "match": "\\b(stm)\\b"
+        },
+        {
+          "name": "variable.function.rmf",
+          "match": "\\b(nopush|noescape|waitanim|fragile|global)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(command|resize)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(frame)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(page|cpage|cut|border|backfill)\\b"
+        },
+        {
+          "name": "variable.function.rmf",
+          "match": "\\b(center)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(key)\\b"
+        },
+        {
+          "name": "support.type.rmf",
+          "match": "\\b(any|ANY)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(ikey|ckey|alias|set|timeout)\\b"
+        },
+        {
+          "name": "variable.rmf",
+          "match": "\\w+"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(cinclude|cninclude|einclude|exinclude)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(comment)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(includecvar|cbuf)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "(?<!\\s)\\b(include|config|exitcfg)\\b"
+        }
       ]
     },
-    "colors": {
-      "patterns": [ { "name": "support.constant.color.rmf", "match": "\\b(?:vbargray|normaltext|hilitetext|backtint|tipback|tip|icontint|iconhilite|hgreen|hblue|lblue|lred|clear|black|transblack|semiblack|smokey|transgray|darkgray|gray|white|orange|red|blue|green|purple|cyan|header|yellow)\\b" } ]
+    "layout": {
+      "patterns": [
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(tint)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(font)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(tint|atint|type)\\b"
+        },
+        {
+          "name": "support.type.rmf",
+          "match": "\\b(small|medium|title|interface)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(br|hbr|HBR|center|normal|left|right)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(cursor)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(defaults)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(noborder|border|tiptint|tipbtint|tipfont)\\b"
+        },
+        {
+          "name": "support.type.rmf",
+          "match": "\\b(small|medium|title)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(translate)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(conv|convbits)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(emote|semote|demote)\\b"
+        },
+        {
+          "name": "constant.character.escape.rmf",
+          "match": "(\\%n)|(\\%p)"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(autoscroll|tab)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(dmnames)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(Standard|Assassin|Arsenal|CTF|Realistic)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(strings)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(backdrop)\\b"
+        },
+        {
+          "name": "variable.function.rmf",
+          "match": "\\b(tile|stretch|center|left|right|bgcolor|global)\\b"
+        }
+      ]
+    },
+    "area": {
+      "patterns": [
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(blank)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(hr|vbar|users|chat|rooms)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(text|ctext)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(image)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(setimage|text|cvartext|abs|scale|alt|hflip|vflip|transient)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(list)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(atext|match|bitmask|files)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(slider)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(min|max|step|vertical|horizontal|bar|button|cap)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(ticker)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(speed|delay)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(input)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(global|hidden|history|maxchars)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(popup)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(setkey)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(atext|talign)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(selection)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(weapons|items|ammo|misc)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(ghoul|bghoul)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(control|oneshot|yaw|pitch|roll|scale|time|animate|rotate|totation|mousex|mousey|gbolt|bgbolt|end)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(gpm)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(cvar2|scale|rotate)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(filebox|filereq)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(sort|backfill|talign)\\b"
+        },
+        {
+          "name": "markup.heading.rmf",
+          "match": "\\b(name|rname|size|rsize|time|rtime)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(loadbox)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(spacing|saving)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "(?<!\\s)\\b(serverbox)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(column|hostname|address|dnames)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "\\b(serverdetail|players)\\b"
+        },
+        {
+          "name": "entity.name.rmf",
+          "match": "\\b(title)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "\\b(listfile)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "\\b(hbar)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "\\b(bot|botlist)\\b"
+        },
+        {
+          "name": "keyword.rmf",
+          "match": "\\b(onexit)\\b"
+        }
+      ]
+    },
+    "area_key": {
+      "patterns": [
+        {
+          "name": "variable.function.rmf",
+          "match": "\\b(key|ikey|ckey|atext|tab|width|height|cvar|cvari|inc|mod|tip|xoff|yoff|tint|atint|btint|ctint|dtint|bolt|bbolt|align|border)\\b"
+        },
+        {
+          "name": "keyword.control.rmf",
+          "match": "\\b(iflt|ifle|ifge|ifeq|ifset|ifclr|ifne|ifgt)\\b"
+        },
+        {
+          "name": "variable.function.rmf",
+          "match": "\\b(regular|invisible|noshade|noborder|noscale)\\b"
+        }
+      ]
+    },
+    "mousekey": {
+      "patterns": [
+        {
+          "name": "markup.heading.rmf",
+          "match": "\\b(any|ANY)\\b"
+        },
+        {
+          "name": "markup.bold.rmf",
+          "match": "(?x)\\b(1|2|3|4|5|6|7|8|9|0|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|tab|enter|escape|space|backspace|uparrow|leftarrow|rightarrow|downarrow|lalt|ralt|lctrl|rctrl|lshift|rshift|f1|f2|f3|f4|f5|f6|f7|f8|f9|f10|f11|f12|ins|del|pgdn|pgup|home|end|mouse1|mouse2|mouse3|mouse4|mouse5|mouse1dbl|mouse2dbl|mouse3dbl|mouse4dbl|mouse5dbl|joy1|joy2|joy3|joy4|aux1|aux2|aux3|aux4|aux5|aux6|aux7|aux8|aux9|aux10|aux11|aux12|aux13|aux14|aux15|aux16|aux17|aux18|aux19|aux20|aux21|aux22|aux23|aux24|aux25|aux26|aux27|aux28|aux29|aux30|aux31|aux32|kp_home|kp_uparrow|kp_pgup|kp_leftarrow|kp_5|kp_rightarrow|kp_end|kp_downarrow|kp_pgdn|kp_enter|kp_ins|kp_del|kp_fslash|kp_star|kp_minus|kp_plus|mwheelup|mwheeldown|pause|semicolon|caps|kp_scroll|kp_numlock|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|TAB|ENTER|ESCAPE|SPACE|BACKSPACE|UPARROW|LEFTARROW|RIGHTARROW|DOWNARROW|LALT|RALT|LCTRL|RCTRL|LSHIFT|RSHIFT|F1|F2|F3|F4|F5|F6|F7|F8|F9|F10|F11|F12|INS|DEL|PGDN|PGUP|HOME|END|MOUSE1|MOUSE2|MOUSE3|MOUSE4|MOUSE5|MOUSE1DBL|MOUSE2DBL|MOUSE3DBL|MOUSE4DBL|MOUSE5DBL|JOY1|JOY2|JOY3|JOY4|AUX1|AUX2|AUX3|AUX4|AUX5|AUX6|AUX7|AUX8|AUX9|AUX10|AUX11|AUX12|AUX13|AUX14|AUX15|AUX16|AUX17|AUX18|AUX19|AUX20|AUX21|AUX22|AUX23|AUX24|AUX25|AUX26|AUX27|AUX28|AUX29|AUX30|AUX31|AUX32|KP_HOME|KP_UPARROW|KP_PGUP|KP_LEFTARROW|KP_5|KP_RIGHTARROW|KP_END|KP_DOWNARROW|KP_PGDN|KP_ENTER|KP_INS|KP_DEL|KP_FSLASH|KP_STAR|KP_MINUS|KP_PLUS|MWHEELUP|MWHEELDOWN|PAUSE|SEMICOLON|CAPS|KP_SCROLL|KP_NUMLOCK|'|\\[|\\]|\\\\|\\/|\\.|\\-|\\=)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "keyword.punctuation.definition.keyword.rmf",
+          "match": "(\\s\\-)|(\\s\\+)|(\\s\\!)"
+        },
+        {
+          "name": "constant.numeric.rmf",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s))?)\\b)"
+        }
+      ]
+    },
+    "macroexpand": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.rmf",
+          "match": "(\\$)|(\\#)"
+        }
+      ]
+    },
+    "always": {
+      "patterns": [
+        {
+          "name": "variable.function.rmf",
+          "match": "\\b(vbargray|normaltext|hilitetext|backtint|tipback|tip|icontint|iconhilite|hgreen|hblue|lblue|lred|clear|black|transblack|semiblack|smokey|transgray|darkgray|gray|white|orange|red|blue|green|purple|cyan|header|yellow)\\b"
+        },
+        {
+          "name": "storage.type.rmf",
+          "match": "(?x)\\b(b_menu|bg_clear|spm_tint_1|spm_tint_2|spm_tint_3|spm_tint_4|spm_tint_5|spm_tint_6|spm_tint_7|spm_tint_8|spm_tint_9|spm_tint_11|spm_tint_12|spm_tint_14|spm_tint_15|spm_tint_16|spm_tint_17|spm_tint_18|spm_tint_19|spm_tint_20|spm_tint_21|spm_tint_22|spm_tint_23|spm_tint_24|spm_tint_25|spm_tint_26|spm_tint_27|spm_tint_28|spm_tint_29|spm_tint_30|spm_tint_31|spm_tint_menu_background|spm_tint_menu_normaltext|spm_tint_menu_hilitetext|spm_tint_menu_border|spm_tint_menu_background_top|spm_tint_menu_normaltext_top|spm_tint_menu_hilitetext_top|spm_tint_menu_disabledtext_top|spm_tint_menu_background_top_left|spm_tint_menu_normaltext_top_left|spm_tint_menu_hilitetext_top_left|spm_tint_menu_statictext|spm_tint_menu_scroll|spm_tint_menu_statictext_top|spm_tint_menu_border_top)\\b"
+        }
+      ]
     }
   }
 }
-
-

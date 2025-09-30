@@ -1,25 +1,50 @@
 {
   "scopeName": "source.def",
   "name": "SoF - Definition",
+  "firstLineMatch": "\\/\\*QUAKED",
   "patterns": [
-    { "include": "#comment" },
-    { "include": "#numbers" },
-    {
-      "name": "meta.quaked.def",
-      "begin": "/\\*",
-      "end": "\\*/",
-      "patterns": [
-        { "name": "entity.other.inherited-class.def", "match": "\\b(?:QUAKED|QUAK-ED)\\b" },
-        { "name": "variable.function.def", "match": "\\w+(?=\\s*\\()" },
-        { "name": "string.quoted.double.def", "match": "\\(|\\)" },
-        { "include": "#numbers" }
-      ]
-    }
+    { "include": "#quaked" },
+    { "include": "#numbers" }
   ],
   "repository": {
-    "comment": { "patterns": [ { "name": "comment.block.def", "begin": "/\\*", "end": "\\*/" } ] },
-    "numbers": { "patterns": [ { "name": "constant.numeric.def", "match": "(?:\\b\\d+\\.\\d+|\\B\\.\\d+|\\b\\d+)(?:[Ee][+-]?\\d+)?" } ] }
+    "quaked": {
+      "patterns": [
+        {
+          "name": "entity.other.inherited-class.def",
+          "begin": "(\\/\\*)",
+          "end": "(\\*\\/)",
+          "patterns": [
+            {
+              "name": "entity.other.inherited-class.def",
+              "match": "\\b(QUAKED\\s)|(QUAK-ED\\s)\\b"
+            },
+            {
+              "name": "variable.function.def",
+              "match": "\\w+\\s+(?=\\()"
+            },
+            {
+              "name": "string.quoted.double.def",
+              "match": "\\("
+            },
+            {
+              "name": "string.quoted.double.def",
+              "match": "(\\)\\s+)(?=\\()|(\\))(?=\\()"
+            },
+            {
+              "name": "variable.parameter.function.def",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.def",
+          "match": "(?x)(?:(?:\\b\\d(?:[\\d']*\\d)?\\.\\d(?:[\\d']*\\d)?|\\B\\.\\d(?:[\\d']*\\d)?)(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)?(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b|(?:\\b\\d(?:[\\d']*\\d)?\\.)(?:\\B|(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))\\b|(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b\\d(?:[\\d']*\\d)?(?:[Ee][+-]?\\d(?:[\\d']*\\d)?)(?:[fFlL]|(?:i[fl]?|h|min|[mun]?s|_\\w*))?\\b)|\\b(?:(?:[1-9](?:[\\d']*\\d)?|0(?:[0-7']*[0-7])?|0[Xx][\\da-fA-F](?:[\\da-fA-F']*[\\da-fA-F])?|0[Bb][01](?:[01']*[01])?)(?:(?:l{1,2}|L{1,2})[uU]?|[uU](?:l{0,2}|L{0,2})|(?:i[fl]?|h|min|[mun]?s|_\\w*))?)\\b)"
+        }
+      ]
+    }
   }
 }
-
-

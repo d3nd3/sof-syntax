@@ -44,7 +44,7 @@
       {"language": "sof-ifl", "scopeName": "source.ifl", "path": "./syntaxes/ifl.tmLanguage.json"},
       {"language": "sof-lst", "scopeName": "source.lst", "path": "./syntaxes/lst.tmLanguage.json"},
       {"language": "sof-qdt", "scopeName": "source.qdt", "path": "./syntaxes/qdt.tmLanguage.json"},
-      {"language": "sof-qe4", "scopeName": "source.wrs", "path": "./syntaxes/qe4.tmLanguage.json"},
+      {"language": "sof-qe4", "scopeName": "source.qe4", "path": "./syntaxes/qe4.tmLanguage.json"},
       {"language": "sof-bpf", "scopeName": "source.bpf", "path": "./syntaxes/bpf.tmLanguage.json"}
     ]
   }
